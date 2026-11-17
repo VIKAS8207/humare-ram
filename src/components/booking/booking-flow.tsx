@@ -176,9 +176,21 @@ export default function BookingFlow() {
           </Link>
           <Link
             href="/"
-            className="text-xs font-medium uppercase tracking-[0.25em] text-bk-muted transition-colors hover:text-bk-ink"
+            aria-label="Close and go back to the site"
+            className="grid size-10 place-content-center rounded-full border border-bk-line text-bk-muted transition-colors hover:border-bk-ink hover:text-bk-ink"
           >
-            ← Back to site
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              aria-hidden
+            >
+              <path d="M1.5 1.5l11 11M12.5 1.5l-11 11" />
+            </svg>
           </Link>
         </div>
       </header>
