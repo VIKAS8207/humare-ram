@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
+
+  /* Booking page palette (beige theme, used only by /book) */
+  --color-bk-bg: #f1e7d3;
+  --color-bk-surface: #faf4e6;
+  --color-bk-ink: #2b1d12;
+  --color-bk-muted: #7a6650;
+  --color-bk-line: #d8c8aa;
+  --color-bk-accent: #b8431a;
+  --color-bk-accent-ink: #fff7ea;
+  --color-bk-gold: #a06a12;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, sans-serif;
+}
+
+/* Lenis recommended base */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Hide scrollbars everywhere; scrolling still works */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Set by inline script on reload while scrolled down (see lib/skip-loader.ts) */
+html.skip-loader [data-loader] {
+  display: none !important;
+}
