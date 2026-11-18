@@ -1,8 +1,8 @@
 "use client";
 
+import AmberBurst from "@/components/effects/amber-burst";
 import { useRef } from "react";
 import Mandala from "@/components/effects/mandala";
-import DivineLight from "@/components/effects/divine-light";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 import type { SpotlightData } from "./spotlight.data";
@@ -23,7 +23,7 @@ export default function SpotlightSection({
   body,
   image,
   glow,
-  divine,
+  amber,
   reverse = false,
 }: Props) {
   const root = useRef<HTMLElement>(null);
@@ -135,7 +135,7 @@ export default function SpotlightSection({
               background: `radial-gradient(circle, ${glow} 0%, transparent 62%)`,
             }}
           />
-          {divine && <DivineLight origin="43% 21%" />}
+          {amber && <AmberBurst origin="50% 42%" />}
           <Image
             src={image.src}
             alt={image.alt}

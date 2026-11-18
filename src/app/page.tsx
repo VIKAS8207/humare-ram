@@ -6,6 +6,7 @@ import MarqueeSection from "@/components/sections/marquee";
 import StatsSection from "@/components/sections/stats";
 import CastCrewSection from "@/components/sections/cast-crew";
 import GallerySection from "@/components/sections/gallery";
+import EventDetailsSection from "@/components/sections/event-details";
 import MusicSection from "@/components/sections/music";
 import SpotlightSection, { RAM, RAVAN } from "@/components/sections/spotlight";
 
@@ -23,6 +24,7 @@ export default function Home() {
         <CastCrewSection />
         <MusicSection />
         <GallerySection />
+        <EventDetailsSection />
       </main>
       <Footer />
     </>

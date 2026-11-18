@@ -8,6 +8,7 @@
 //   marquee/    logo strip         ← AUTO: just drop files in, no code change
 //   singers/    singer photos      ← AUTO: name the file after the singer slug
 //   gallery/    carousel photos    ← AUTO: just drop files in, no code change
+//   footer/     footer backdrop    ← drop `footer-bg.png` (or .jpg/.webp) in; shows automatically
 //
 // To REPLACE a fixed image below, overwrite the file keeping the same name
 // (or change `src` here). width/height only need to match the file's aspect

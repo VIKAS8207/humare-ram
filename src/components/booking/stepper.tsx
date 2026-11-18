@@ -1,4 +1,4 @@
-export const STEPS = ["Venue", "Date & Time", "Seats", "Review & Pay"] as const;
+export const STEPS = ["Date & Time", "Seats", "Review & Pay"] as const;
 
 type Props = {
   step: number;

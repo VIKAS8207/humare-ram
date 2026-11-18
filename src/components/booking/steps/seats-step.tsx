@@ -9,17 +9,21 @@ import {
   useState,
 } from "react";
 import {
+  BOOKMYSHOW_URL,
   GROUP_BOOKING_CONTACT,
   MAX_SEATS,
   SEAT_CATEGORIES,
 } from "../booking.data";
 import { categoryOfSeat, inr, isSeatTaken, sortSeats } from "../booking.utils";
 import {
+  type SeatPos,
   PLAN_HEIGHT,
   PLAN_WIDTH,
   ROW_LABELS,
   ROW_ORDER,
   SEATS,
+  SEAT_BY_ID,
+  SEAT_PITCH,
   SEAT_RADIUS,
   STAGE,
 } from "../seat-layout";
@@ -38,12 +42,16 @@ type Props = {
   groupContact?: boolean;
 };
 
+// Selected seats: plain green, no border
+const SELECTED_COLOR = "#16a34a";
+
 const ZOOMS = [1, 1.5, 2, 3, 4];
 
 // Picks N seats next to each other, as close to the stage centre as possible.
+// Only seats sold on this site (bookable) are considered.
 function bestAvailable(isTaken: (id: string) => boolean, n: number): string[] {
   for (const row of ROW_ORDER) {
-    const rowSeats = SEATS.filter((s) => s.row === row).sort(
+    const rowSeats = SEATS.filter((s) => s.row === row && s.bookable).sort(
       (a, b) => a.x - b.x,
     );
     const mid = PLAN_WIDTH / 2;
@@ -52,7 +60,8 @@ function bestAvailable(isTaken: (id: string) => boolean, n: number): string[] {
       const run = rowSeats.slice(i, i + n);
       const contiguous = run.every(
         (s, k) =>
-          k === 0 || (s.x - run[k - 1].x < 24 && s.n === run[k - 1].n + 1),
+          k === 0 ||
+          (s.x - run[k - 1].x < SEAT_PITCH * 1.5 && s.n === run[k - 1].n - 1),
       );
       if (!contiguous || run.some((s) => isTaken(s.id))) continue;
       const centre = run.reduce((sum, s) => sum + s.x, 0) / n;
@@ -80,7 +89,7 @@ function QuantityPicker({
 }) {
   const [n, setN] = useState(current ?? 2);
   const [groupOpen, setGroupOpen] = useState(false);
-  const tel = GROUP_BOOKING_CONTACT.phone.replace(/[^+d]/g, "");
+  const tel = GROUP_BOOKING_CONTACT.phone.replace(/[^+\d]/g, "");
 
   const step =
     "grid size-12 place-content-center rounded-full border border-bk-line text-2xl transition-colors hover:border-bk-accent disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-bk-line";
@@ -291,21 +300,49 @@ export default function SeatsStep({
   const selected = useMemo(() => new Set(seats), [seats]);
   const remaining = quantity === null ? 0 : quantity - seats.length;
 
+  // Seats not sold on this site: send the visitor to BookMyShow (new tab, so
+  // the seats picked here are kept)
+  const goToBookMyShow = () => {
+    window.open(BOOKMYSHOW_URL, "_blank", "noopener,noreferrer");
+    setNotice(
+      "Those seats are sold on BookMyShow. We opened it in a new tab for you.",
+    );
+  };
+
+  // Like the ticket apps: tapping a seat selects the whole group of seats
+  // together (next to it, same row, same block); tapping somewhere else moves
+  // the group there. Tapping a selected seat clears the group.
   const toggle = (id: string) => {
     if (quantity === null || isTaken(id)) return;
     if (selected.has(id)) {
       setNotice("");
-      onSeats(seats.filter((s) => s !== id));
+      onSeats([]);
       return;
     }
-    if (seats.length >= quantity) {
+    const clicked = SEAT_BY_ID[id];
+    const rowSeats = SEATS.filter(
+      (s) => s.row === clicked.row && s.bookable,
+    ).sort((a, b) => a.x - b.x);
+    // Free seats joined to the clicked one, with no aisle or gap in between
+    let lo = rowSeats.findIndex((s) => s.id === id);
+    let hi = lo;
+    const joined = (a: SeatPos, b: SeatPos) =>
+      Math.abs(b.x - a.x) < SEAT_PITCH * 1.5 && !isTaken(b.id);
+    while (lo > 0 && joined(rowSeats[lo], rowSeats[lo - 1])) lo--;
+    while (hi < rowSeats.length - 1 && joined(rowSeats[hi], rowSeats[hi + 1]))
+      hi++;
+    const run = rowSeats.slice(lo, hi + 1);
+    if (run.length < quantity) {
       setNotice(
-        `You chose ${quantity} seat${quantity > 1 ? "s" : ""}. Deselect one to pick another.`,
+        `${quantity} seats together are not free here. Pick another spot.`,
       );
       return;
     }
+    // Start at the tapped seat and go right; slide left if there is no room
+    const at = rowSeats.findIndex((s) => s.id === id) - lo;
+    const start = Math.min(at, run.length - quantity);
     setNotice("");
-    onSeats([...seats, id]);
+    onSeats(run.slice(start, start + quantity).map((s) => s.id));
   };
 
   const pick = (n: number) => {
@@ -433,14 +470,27 @@ export default function SeatsStep({
           <span aria-hidden className="size-3.5 rounded-full bg-bk-line" />
           Sold
         </li>
+        <li className="flex items-center gap-2 text-bk-muted">
+          <span
+            aria-hidden
+            className="size-3.5 rounded-full border border-bk-muted/60"
+          />
+          Book on BookMyShow
+        </li>
         <li className="flex items-center gap-2">
           <span
             aria-hidden
-            className="size-3.5 rounded-full bg-bk-ink ring-2 ring-bk-accent"
+            className="size-3.5 rounded-full"
+            style={{ background: SELECTED_COLOR }}
           />
           Selected
         </li>
       </ul>
+
+      <p className="text-sm text-bk-muted">
+        Tap a seat and all your seats are selected together, side by side. Tap
+        another spot to move them. Grey outlined seats are sold on BookMyShow.
+      </p>
 
       {/* Seat plan */}
       <div className="relative rounded-2xl border border-bk-line bg-bk-surface">
@@ -474,6 +524,26 @@ export default function SeatsStep({
 
             {/* Seats */}
             {SEATS.map((s) => {
+              // Not sold on this site: hollow seat that leads to BookMyShow
+              if (!s.bookable) {
+                return (
+                  <circle
+                    key={s.id}
+                    cx={s.x}
+                    cy={s.y}
+                    r={SEAT_RADIUS}
+                    fill="rgba(43,29,18,0.04)"
+                    stroke="rgba(43,29,18,0.3)"
+                    strokeWidth={0.9}
+                    role="link"
+                    aria-label={`Row ${s.row} seat ${s.n}, book on BookMyShow`}
+                    className="cursor-pointer hover:fill-[rgba(43,29,18,0.16)]"
+                    onClick={() => !dragMoved.current && goToBookMyShow()}
+                  >
+                    <title>{`${s.row} ${s.n} · Book on BookMyShow`}</title>
+                  </circle>
+                );
+              }
               const taken = isTaken(s.id);
               const isSel = selected.has(s.id);
               const cat = categoryOfSeat(s.id);
@@ -482,17 +552,15 @@ export default function SeatsStep({
                   key={s.id}
                   cx={s.x}
                   cy={s.y}
-                  r={isSel ? SEAT_RADIUS + 0.8 : SEAT_RADIUS}
+                  r={SEAT_RADIUS}
                   fill={
                     taken
                       ? "rgba(43,29,18,0.14)"
                       : isSel
-                        ? "#2b1d12"
+                        ? SELECTED_COLOR
                         : cat.color
                   }
-                  fillOpacity={taken || isSel ? 1 : 0.8}
-                  stroke={isSel ? "#b8431a" : "none"}
-                  strokeWidth={isSel ? 2.2 : 0}
+                  fillOpacity={taken || isSel ? 1 : 0.85}
                   role="checkbox"
                   aria-checked={isSel}
                   aria-disabled={taken}

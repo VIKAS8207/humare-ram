@@ -1,14 +1,19 @@
-// Theatre seating plan, generated once. Stage is at the BOTTOM of the plan.
+// Theatre seating plan, built from the real seating PDF (see seat-plan.data.ts).
+// The stage is at the BOTTOM of the plan.
 //
-//   Balcony   rows X..Q   (top, farthest)
-//   Mid       rows P..J
-//   Front     rows H..A
-//   Pit       rows CC..AA (closest to the stage)
+//   Balcony (Bronze)        rows B11..B1      top, farthest        BookMyShow
+//   Silver                  rows AD..P                             BookMyShow
+//   Gold                    rows O..J                              BookMyShow
+//                           rows I, H                              THIS site
+//   Diamond + Platinum      rows G..A                              THIS site
+//   VVIP sofa row           row VVIP          next to the stage    THIS site
 //
-// Each row is split into left / centre / right blocks with aisles between.
-// Side blocks are aligned to the centre aisle, so rows nearer the stage get
-// shorter on the sides, giving the curved "fan" shape.
-// Seat ids are `${row}${number}` with numbers running left to right (e.g. "C7").
+// Only the red seats of the PDF (`bookable`) are sold on this website. Every
+// other seat is drawn too, but clicking it sends the visitor to BookMyShow.
+// Seat ids are `${row}${number}` (e.g. "G22") for the bookable seats; the other
+// seats get an internal id (`${row}~${number}`) that is never shown to anyone.
+
+import { PLAN_ROWS, PLAN_STAGE } from "./seat-plan.data";
 
 export type SeatPos = {
   id: string;
@@ -17,144 +22,75 @@ export type SeatPos = {
   x: number;
   y: number;
   tier: string; // SeatCategory id
+  /** Sold on this site (red on the PDF). false = sold on BookMyShow */
+  bookable: boolean;
 };
 
 export type RowLabel = { row: string; x: number; y: number };
 
-const PITCH = 17; // seat spacing
-const ROW_PITCH = 18;
-const AISLE = 46;
-const MARGIN = 46;
-const MAX_SIDE = 12;
-const CENTER = 16;
-const SECTION_GAP = 36;
-const R = 6.4; // seat radius
+const SCALE = 2; // PDF points -> plan units
+const OFFSET_X = 82;
+const OFFSET_Y = 66;
+const PITCH = 8.4; // seat spacing in the PDF
+const R = 6.4; // seat radius (plan units)
+const LABEL_GAP = 9; // PDF points between a row letter and its first seat
 
-type Section = {
-  rows: string[]; // listed top -> bottom
-  center: number;
-  maxSide: number;
-  minSide: number;
-  tier: (row: string, block: "L" | "C" | "R") => string;
-};
-
-const letters = (from: string, to: string) => {
-  const out: string[] = [];
-  for (let c = from.charCodeAt(0); c <= to.charCodeAt(0); c++)
-    out.push(String.fromCharCode(c));
-  return out;
-};
-
-const SECTIONS: Section[] = [
-  {
-    rows: letters("Q", "X").reverse(), // X (top) ... Q
-    center: CENTER,
-    maxSide: 12,
-    minSide: 9,
-    tier: (row) => (row <= "T" ? "silver" : "standard"),
-  },
-  {
-    rows: letters("J", "P").reverse(), // P ... J
-    center: CENTER,
-    maxSide: 12,
-    minSide: 9,
-    tier: () => "gold",
-  },
-  {
-    rows: letters("A", "H").reverse(), // H ... A
-    center: CENTER,
-    maxSide: 12,
-    minSide: 8,
-    tier: (row, block) => (block === "C" && row <= "E" ? "royal" : "premium"),
-  },
-  {
-    rows: ["CC", "BB", "AA"],
-    center: 10,
-    maxSide: 8,
-    minSide: 8,
-    tier: () => "premium",
-  },
-];
-
-/** Rows from the stage outwards — used to sort seats for display. */
-export const ROW_ORDER = [
-  "AA",
-  "BB",
-  "CC",
-  ...letters("A", "H"),
-  ...letters("J", "P"),
-  ...letters("Q", "X"),
-];
+const px = (x: number) => (x - OFFSET_X) * SCALE;
+const py = (y: number) => (y - OFFSET_Y) * SCALE;
 
 export const SEATS: SeatPos[] = [];
 export const ROW_LABELS: RowLabel[] = [];
 
-const innerLeftEdge = MARGIN + MAX_SIDE * PITCH;
-const centerStart = innerLeftEdge + AISLE;
-const rightStart = centerStart + CENTER * PITCH + AISLE;
-export const PLAN_WIDTH = rightStart + MAX_SIDE * PITCH + MARGIN;
-
-let y = 34;
-SECTIONS.forEach((section, si) => {
-  const count = section.rows.length;
-  section.rows.forEach((row, ri) => {
-    const side =
-      count === 1
-        ? section.maxSide
-        : section.maxSide -
-          Math.round((ri * (section.maxSide - section.minSide)) / (count - 1));
-
-    const centerOffset = ((CENTER - section.center) / 2) * PITCH;
-    let n = 1;
-
-    for (let j = 0; j < side; j++) {
+for (const row of PLAN_ROWS) {
+  let left = Infinity;
+  let right = -Infinity;
+  for (const [x, from, to, bookable] of row.blocks) {
+    const count = from - to + 1;
+    for (let k = 0; k < count; k++) {
+      const n = from - k; // highest number is on the left
+      const cx = x + k * PITCH;
       SEATS.push({
-        id: `${row}${n}`,
-        row,
-        n: n++,
-        x: innerLeftEdge - (side - j - 0.5) * PITCH,
-        y,
-        tier: section.tier(row, "L"),
+        id: bookable ? `${row.row}${n}` : `${row.row}~${n}`,
+        row: row.row,
+        n,
+        x: px(cx),
+        y: py(row.y),
+        tier: row.tier,
+        bookable,
       });
     }
-    for (let j = 0; j < section.center; j++) {
-      SEATS.push({
-        id: `${row}${n}`,
-        row,
-        n: n++,
-        x: centerStart + centerOffset + (j + 0.5) * PITCH,
-        y,
-        tier: section.tier(row, "C"),
-      });
-    }
-    for (let j = 0; j < side; j++) {
-      SEATS.push({
-        id: `${row}${n}`,
-        row,
-        n: n++,
-        x: rightStart + (j + 0.5) * PITCH,
-        y,
-        tier: section.tier(row, "R"),
-      });
-    }
+    left = Math.min(left, x);
+    right = Math.max(right, x + (count - 1) * PITCH);
+  }
+  ROW_LABELS.push({ row: row.row, x: px(left - LABEL_GAP), y: py(row.y) });
+  ROW_LABELS.push({ row: row.row, x: px(right + LABEL_GAP), y: py(row.y) });
+}
 
-    ROW_LABELS.push({ row, x: innerLeftEdge - side * PITCH - 14, y });
-    ROW_LABELS.push({ row, x: rightStart + side * PITCH + 14, y });
-    y += ROW_PITCH;
-  });
-  if (si < SECTIONS.length - 1) y += SECTION_GAP;
-});
+/** Bookable rows from the stage outwards — used to sort seats for display. */
+export const ROW_ORDER = [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "I",
+  "VVIP",
+];
 
-const STAGE_W = 380;
-const STAGE_H = 54;
+export const PLAN_WIDTH = px(530);
 export const STAGE = {
-  x: PLAN_WIDTH / 2 - STAGE_W / 2,
-  y: y + 14,
-  width: STAGE_W,
-  height: STAGE_H,
+  x: px(PLAN_STAGE.x),
+  y: py(PLAN_STAGE.y),
+  width: PLAN_STAGE.width * SCALE,
+  height: PLAN_STAGE.height * SCALE,
 };
-export const PLAN_HEIGHT = STAGE.y + STAGE_H + 30;
+export const PLAN_HEIGHT = STAGE.y + STAGE.height + 24;
 export const SEAT_RADIUS = R;
+/** Horizontal distance between two neighbouring seats (plan units) */
+export const SEAT_PITCH = PITCH * SCALE;
 
 export const SEAT_BY_ID: Record<string, SeatPos> = Object.fromEntries(
   SEATS.map((s) => [s.id, s]),

@@ -59,3 +59,53 @@ export default function SummaryPanel({ selection, children }: Props) {
     </div>
   );
 }
+
+// Booking summary pinned to the bottom of the screen: show, seats, total and
+// the action buttons (`children`) all in one bar.
+export function BookingBar({ selection, children }: Props) {
+  const venue = VENUES.find((v) => v.id === selection.venueId);
+  const total = totalOf(selection.seats);
+  const seats = sortSeats(selection.seats);
+
+  const show =
+    selection.date && selection.time
+      ? `${dateParts(selection.date).weekday}, ${dateParts(selection.date).day} ${dateParts(selection.date).month} · ${formatTime(selection.time)}`
+      : "Pick a date and time";
+
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-bk-line bg-bk-bg/95 px-6 py-4 shadow-[0_-8px_30px_-12px_rgba(43,29,18,0.25)] backdrop-blur">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 md:flex-row md:items-center md:gap-8">
+        <dl className="grid min-w-0 flex-1 grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-1 text-sm md:grid-cols-[repeat(3,auto)] md:justify-start">
+          <div className="min-w-0 md:col-span-1">
+            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-bk-muted">
+              Show
+            </dt>
+            <dd className="truncate font-medium">{show}</dd>
+            {venue && (
+              <dd className="hidden truncate text-xs text-bk-muted md:block">
+                {venue.name}
+              </dd>
+            )}
+          </div>
+          <div className="min-w-0">
+            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-bk-muted">
+              Seats{seats.length ? ` (${seats.length})` : ""}
+            </dt>
+            <dd className="truncate font-medium">
+              {seats.length ? seats.join(", ") : "—"}
+            </dd>
+          </div>
+          <div className="col-span-2 flex items-baseline gap-3 md:col-span-1 md:flex-col md:gap-0">
+            <dt className="text-[0.65rem] uppercase tracking-[0.2em] text-bk-muted">
+              Total
+            </dt>
+            <dd className="text-2xl font-semibold leading-none tracking-tight">
+              {inr(total)}
+            </dd>
+          </div>
+        </dl>
+        <div className="md:w-80 md:shrink-0">{children}</div>
+      </div>
+    </div>
+  );
+}

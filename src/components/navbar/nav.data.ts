@@ -1,8 +1,7 @@
 // Placeholder links — point these at real sections/pages.
 export const NAV_LINKS = [
   { label: "Home", href: "#" },
-  { label: "About", href: "#about" },
-  { label: "Shows", href: "#shows" },
+  { label: "Show", href: "#shows" },
   { label: "Gallery", href: "#gallery" },
   { label: "Contact", href: "#contact" },
 ] as const;

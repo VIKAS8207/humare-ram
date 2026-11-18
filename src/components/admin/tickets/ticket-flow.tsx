@@ -5,9 +5,8 @@ import Link from "next/link";
 import Stepper from "@/components/booking/stepper";
 import DateTimeStep from "@/components/booking/steps/datetime-step";
 import SeatsStep from "@/components/booking/steps/seats-step";
-import VenueStep from "@/components/booking/steps/venue-step";
 import SummaryPanel, { totalOf } from "@/components/booking/summary-panel";
-import { SEAT_CATEGORIES, VENUES } from "@/components/booking/booking.data";
+import { SEAT_CATEGORIES, VENUE, VENUES } from "@/components/booking/booking.data";
 import type { Selection } from "@/components/booking/booking.types";
 import {
   categoryOfSeat,
@@ -28,7 +27,7 @@ import { PAYMENT_MODES } from "./payment-modes";
 
 type Mode = Exclude<SeatRecordType, never>;
 
-const STEPS = ["Venue", "Date & Time", "Seats", "Details & Confirm"] as const;
+const STEPS = ["Date & Time", "Seats", "Details & Confirm"] as const;
 const LAST = STEPS.length - 1;
 const ADMIN_MAX_SEATS = 20;
 
@@ -110,7 +109,7 @@ export default function TicketFlow({
 
   const [step, setStep] = useState(0);
   const [selection, setSelection] = useState<Selection>({
-    venueId: null,
+    venueId: VENUE.id,
     date: null,
     time: null,
     quantity: null,
@@ -141,8 +140,6 @@ export default function TicketFlow({
   const errors = validate(mode, person);
 
   // Changing an earlier choice clears what depended on it
-  const selectVenue = (venueId: string) =>
-    setSelection((s) => ({ ...s, venueId, date: null, time: null, seats: [] }));
   const selectDate = (date: string) =>
     setSelection((s) => ({ ...s, date, time: null, seats: [] }));
   const selectTime = (time: string) =>
@@ -156,7 +153,6 @@ export default function TicketFlow({
   const setSeats = (seats: string[]) => setSelection((s) => ({ ...s, seats }));
 
   const stepValid = [
-    Boolean(selection.venueId),
     Boolean(selection.date && selection.time),
     selection.quantity !== null &&
       selection.seats.length === selection.quantity,
@@ -190,7 +186,7 @@ export default function TicketFlow({
   const reset = () => {
     setStep(0);
     setSelection({
-      venueId: null,
+      venueId: VENUE.id,
       date: null,
       time: null,
       quantity: null,
@@ -278,13 +274,7 @@ export default function TicketFlow({
 
             <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_22rem] lg:gap-14">
               <div className="min-w-0">
-                {step === 0 && (
-                  <VenueStep
-                    venueId={selection.venueId}
-                    onSelect={selectVenue}
-                  />
-                )}
-                {step === 1 && selection.venueId && (
+                {step === 0 && selection.venueId && (
                   <DateTimeStep
                     venueId={selection.venueId}
                     date={selection.date}
@@ -293,7 +283,7 @@ export default function TicketFlow({
                     onTime={selectTime}
                   />
                 )}
-                {step === 2 &&
+                {step === 1 &&
                   selection.venueId &&
                   selection.date &&
                   selection.time && (
@@ -312,7 +302,7 @@ export default function TicketFlow({
                       groupContact={false}
                     />
                   )}
-                {step === 3 && (
+                {step === 2 && (
                   <div className="flex flex-col gap-10">
                     <header className="flex flex-col gap-2">
                       <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">

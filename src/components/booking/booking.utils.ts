@@ -64,7 +64,7 @@ export const showKeyOf = (venueId: string, date: string, time: string) =>
   `${venueId}|${date}|${time}`;
 
 const splitSeat = (id: string) => {
-  const m = /^([A-Z]+)(d+)$/.exec(id);
+  const m = /^([A-Z]+)(\d+)$/.exec(id);
   return { row: m ? m[1] : id, n: m ? Number(m[2]) : 0 };
 };
 

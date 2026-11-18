@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { IMAGES } from "@/config/images";
+import { VENUE } from "./booking.data";
 import { startPayment } from "@/lib/payment";
 import { takenSeatsForShow, useSeatRecords } from "@/lib/seat-store";
 import type { Attendee, Confirmation, Selection } from "./booking.types";
@@ -14,8 +15,7 @@ import Stepper, { STEPS } from "./stepper";
 import DateTimeStep from "./steps/datetime-step";
 import ReviewPayStep from "./steps/review-pay-step";
 import SeatsStep from "./steps/seats-step";
-import VenueStep from "./steps/venue-step";
-import SummaryPanel, { totalOf } from "./summary-panel";
+import { BookingBar, totalOf } from "./summary-panel";
 
 const LAST_STEP = STEPS.length - 1;
 
@@ -65,7 +65,7 @@ function StepNav({
 export default function BookingFlow() {
   const [step, setStep] = useState(0);
   const [selection, setSelection] = useState<Selection>({
-    venueId: null,
+    venueId: VENUE.id, // single venue: always selected
     date: null,
     time: null,
     quantity: null,
@@ -118,8 +118,6 @@ export default function BookingFlow() {
   );
 
   // Changing an earlier choice clears everything that depended on it
-  const selectVenue = (venueId: string) =>
-    setSelection((s) => ({ ...s, venueId, date: null, time: null, seats: [] }));
   const selectDate = (date: string) =>
     setSelection((s) => ({ ...s, date, time: null, seats: [] }));
   const selectTime = (time: string) =>
@@ -136,7 +134,6 @@ export default function BookingFlow() {
   const errors = validateAttendee(attendee);
   const total = totalOf(selection.seats);
   const stepValid = [
-    Boolean(selection.venueId),
     Boolean(selection.date && selection.time),
     selection.quantity !== null &&
       selection.seats.length === selection.quantity,
@@ -207,7 +204,7 @@ export default function BookingFlow() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 pb-32 pt-8 lg:pb-16">
+      <main className="mx-auto max-w-6xl px-6 pb-44 pt-8 md:pb-36">
         {confirmation ? (
           <div ref={content}>
             <ConfirmationView
@@ -220,15 +217,9 @@ export default function BookingFlow() {
           <>
             <Stepper step={step} onStepClick={(i) => !paying && setStep(i)} />
 
-            <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_22rem] lg:gap-14">
+            <div className="mt-10">
               <div ref={content} className="min-w-0">
-                {step === 0 && (
-                  <VenueStep
-                    venueId={selection.venueId}
-                    onSelect={selectVenue}
-                  />
-                )}
-                {step === 1 && selection.venueId && (
+                {step === 0 && selection.venueId && (
                   <DateTimeStep
                     venueId={selection.venueId}
                     date={selection.date}
@@ -237,7 +228,7 @@ export default function BookingFlow() {
                     onTime={selectTime}
                   />
                 )}
-                {step === 2 &&
+                {step === 1 &&
                   selection.venueId &&
                   selection.date &&
                   selection.time && (
@@ -254,7 +245,7 @@ export default function BookingFlow() {
                       extraTaken={adminTaken}
                     />
                   )}
-                {step === 3 && (
+                {step === 2 && (
                   <ReviewPayStep
                     seats={selection.seats}
                     attendee={attendee}
@@ -270,44 +261,18 @@ export default function BookingFlow() {
                   />
                 )}
               </div>
-
-              <aside className="lg:sticky lg:top-8 lg:self-start">
-                <SummaryPanel selection={selection}>
-                  <div className="hidden lg:block">
-                    <StepNav
-                      step={step}
-                      canNext={stepValid}
-                      paying={paying}
-                      total={total}
-                      onBack={back}
-                      onNext={next}
-                    />
-                  </div>
-                </SummaryPanel>
-              </aside>
             </div>
 
-            {/* Mobile action bar */}
-            <div className="fixed inset-x-0 bottom-0 z-30 border-t border-bk-line bg-bk-bg/90 px-6 py-4 backdrop-blur lg:hidden">
-              <div className="mx-auto flex max-w-6xl items-center gap-4">
-                <div className="flex flex-col">
-                  <span className="text-[0.65rem] uppercase tracking-[0.2em] text-bk-muted">
-                    Total
-                  </span>
-                  <span className="text-lg font-semibold">{inr(total)}</span>
-                </div>
-                <div className="flex-1">
-                  <StepNav
-                    step={step}
-                    canNext={stepValid}
-                    paying={paying}
-                    total={total}
-                    onBack={back}
-                    onNext={next}
-                  />
-                </div>
-              </div>
-            </div>
+            <BookingBar selection={selection}>
+              <StepNav
+                step={step}
+                canNext={stepValid}
+                paying={paying}
+                total={total}
+                onBack={back}
+                onNext={next}
+              />
+            </BookingBar>
           </>
         )}
       </main>

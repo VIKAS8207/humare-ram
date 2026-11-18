@@ -88,104 +88,123 @@ html.skip-loader [data-loader] {
   }
 }
 
-/* "Divine" light behind Lord Ram (see components/effects/divine-light.tsx) */
-.divine-rays {
-  background: repeating-conic-gradient(
-    from 0deg,
-    rgba(255, 220, 140, 0.5) 0deg 2.2deg,
-    transparent 2.2deg 11.25deg
-  );
-  -webkit-mask: radial-gradient(
-    circle closest-side,
-    #000 0%,
-    rgba(0, 0, 0, 0.55) 35%,
-    transparent 100%
-  );
-  mask: radial-gradient(
-    circle closest-side,
-    #000 0%,
-    rgba(0, 0, 0, 0.55) 35%,
-    transparent 100%
-  );
-  mix-blend-mode: screen;
-  animation: divine-spin 170s linear infinite;
+/* Cherry-blossom petals (see components/effects/petals.tsx) */
+.petals-box {
+  container-type: size;
 }
-.divine-rays-b {
-  background: repeating-conic-gradient(
-    from 6deg,
-    rgba(255, 170, 60, 0.4) 0deg 1.3deg,
-    transparent 1.3deg 18deg
-  );
-  animation-duration: 230s;
-  animation-direction: reverse;
+.petal-drift {
+  animation: petal-drift var(--dur, 34s) linear var(--delay, 0s) infinite;
+  will-change: transform;
 }
-.divine-halo {
-  background: radial-gradient(
-    circle,
-    rgba(255, 238, 175, 0.65) 0%,
-    rgba(255, 186, 72, 0.4) 22%,
-    rgba(232, 112, 30, 0.2) 45%,
-    transparent 68%
-  );
-  animation: divine-pulse 7s ease-in-out infinite;
+.petal-sway {
+  animation: petal-sway var(--sway-t, 4s) ease-in-out infinite alternate;
 }
-.divine-dot {
-  border-radius: 9999px;
-  background: #ffeab0;
-  box-shadow: 0 0 6px 1px rgba(255, 200, 90, 0.85);
+.petal {
+  border-radius: 100% 0 100% 0;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 4px rgb(255 160 195 / 0.5));
+  animation: petal-spin var(--spin, 5s) linear infinite;
 }
-.divine-star {
-  background: #fff6d6;
-  clip-path: polygon(
-    50% 0,
-    62% 38%,
-    100% 50%,
-    62% 62%,
-    50% 100%,
-    38% 62%,
-    0 50%,
-    38% 38%
-  );
-  filter: drop-shadow(0 0 3px rgba(255, 210, 110, 0.9));
+.petal-0 {
+  background: linear-gradient(135deg, #ffd9e6, #ff9ebd);
 }
-.divine-twinkle {
-  opacity: 0;
-  animation: divine-twinkle var(--d, 4s) ease-in-out var(--delay, 0s) infinite;
+.petal-1 {
+  background: linear-gradient(135deg, #ffc2d6, #f77ba4);
 }
-@keyframes divine-spin {
-  to {
-    transform: rotate(360deg);
-  }
+.petal-2 {
+  background: linear-gradient(135deg, #fff0f5, #ffb3cc);
 }
-@keyframes divine-pulse {
-  0%,
-  100% {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-}
-@keyframes divine-twinkle {
-  0%,
-  100% {
+@keyframes petal-drift {
+  from {
+    transform: translate3d(var(--sx), var(--sy), 0);
     opacity: 0;
-    transform: scale(0.4);
   }
-  50% {
+  8% {
     opacity: 1;
-    transform: scale(1);
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(var(--ex), var(--ey), 0);
+    opacity: 0;
+  }
+}
+@keyframes petal-sway {
+  from {
+    transform: translateX(calc(var(--sway, 14px) * -1));
+  }
+  to {
+    transform: translateX(var(--sway, 14px));
+  }
+}
+@keyframes petal-spin {
+  from {
+    transform: perspective(240px) rotate3d(var(--ax), var(--ay), var(--az), 0deg);
+  }
+  to {
+    transform: perspective(240px) rotate3d(var(--ax), var(--ay), var(--az), 360deg);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .divine-rays,
-  .divine-halo,
-  .divine-twinkle {
+  .petal-drift,
+  .petal-sway,
+  .petal {
     animation: none;
   }
-  .divine-twinkle {
-    opacity: 0.45;
+}
+
+/* Amber sparks flying out from a centre point (see components/effects/amber-burst.tsx) */
+.amber-box {
+  container-type: size;
+}
+.amber-fly {
+  /* radius of the circle the sparks fade out at (cqw = share of the box width;
+     must be set on a child, a container cannot measure itself) */
+  --reach: 70cqw;
+  animation: amber-fly var(--dur, 9s) ease-out var(--delay, 0s) infinite;
+  will-change: transform, opacity;
+}
+.amber-spark {
+  background: radial-gradient(circle, #fff3c4 0%, #ffc04d 55%, #ff9a1f 100%);
+  box-shadow:
+    0 0 8px 2px rgba(255, 190, 70, 1),
+    0 0 20px 5px rgba(255, 140, 30, 0.6);
+  animation: amber-twinkle var(--flicker, 1.2s) ease-in-out infinite alternate;
+}
+@keyframes amber-fly {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(
+        calc(var(--dx) * var(--reach)),
+        calc(var(--dy) * var(--reach))
+      )
+      scale(0.8);
+    opacity: 0;
+  }
+}
+@keyframes amber-twinkle {
+  from {
+    opacity: 0.35;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .amber-fly,
+  .amber-spark {
+    animation: none;
+  }
+  .amber-fly {
+    display: none;
   }
 }

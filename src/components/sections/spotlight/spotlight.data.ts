@@ -15,8 +15,8 @@ export type SpotlightData = {
   image: { src: string; alt: string; width: number; height: number };
   /** Glow behind the character, any CSS color */
   glow: string;
-  /** Rays + halo + twinkles behind the character (used for Lord Ram) */
-  divine?: boolean;
+  /** Twinkling amber sparks flying out from the centre of the glow (Lord Ram) */
+  amber?: boolean;
 };
 
 export const RAVAN: SpotlightData = {
@@ -44,5 +44,5 @@ export const RAM: SpotlightData = {
     alt: "Rahul Bhuchar as Lord Shri Ram, holding a quiver of arrows",
   },
   glow: "rgba(255, 190, 70, 0.55)",
-  divine: true,
+  amber: true,
 };
