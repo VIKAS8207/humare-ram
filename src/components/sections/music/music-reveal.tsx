@@ -26,7 +26,11 @@ export default function MusicReveal({
           duration: 0.9,
           ease: "power3.out",
           stagger: 0.12,
-          scrollTrigger: { trigger: root.current, start: "top 70%", once: true },
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top 70%",
+            once: true,
+          },
         });
         gsap.from(".m-card", {
           y: 70,

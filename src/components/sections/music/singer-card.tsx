@@ -45,8 +45,12 @@ export default function SingerCard({ name, description, badge, image }: Props) {
             {badge}
           </span>
         )}
-        <h3 className="text-xl font-semibold tracking-tight text-amber-100">{name}</h3>
-        <p className="max-w-xs text-sm leading-relaxed text-white/60">{description}</p>
+        <h3 className="text-xl font-semibold tracking-tight text-amber-100">
+          {name}
+        </h3>
+        <p className="max-w-xs text-sm leading-relaxed text-white/60">
+          {description}
+        </p>
       </div>
     </article>
   );

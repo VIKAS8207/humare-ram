@@ -15,7 +15,10 @@ export async function getSingerImages(): Promise<Record<string, string>> {
     return Object.fromEntries(
       files
         .filter((f) => EXT.test(f))
-        .map((f) => [f.replace(EXT, "").toLowerCase(), `/images/singers/${encodeURIComponent(f)}`]),
+        .map((f) => [
+          f.replace(EXT, "").toLowerCase(),
+          `/images/singers/${encodeURIComponent(f)}`,
+        ]),
     );
   } catch {
     return {};

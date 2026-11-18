@@ -18,14 +18,17 @@ export default async function MarqueeSection() {
     >
       <MarqueeRow direction={1} speed={50}>
         {items.map((logo, i) => (
-          <div key={`${logo.src}-${i}`} className="flex shrink-0 items-center px-8 md:px-14">
+          <div
+            key={`${logo.src}-${i}`}
+            className="flex shrink-0 items-center px-8 md:px-14"
+          >
             <Image
               src={logo.src}
               alt={logo.alt}
               width={logo.width}
               height={logo.height}
               sizes="200px"
-              className="h-8 w-auto max-w-none select-none opacity-60 grayscale md:h-12"
+              className="h-8 w-auto max-w-none select-none opacity-70 brightness-0 invert md:h-12"
             />
           </div>
         ))}

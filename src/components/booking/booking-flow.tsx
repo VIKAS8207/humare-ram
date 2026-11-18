@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { IMAGES } from "@/config/images";
 import { startPayment } from "@/lib/payment";
+import { takenSeatsForShow, useSeatRecords } from "@/lib/seat-store";
 import type { Attendee, Confirmation, Selection } from "./booking.types";
 import { inr, showKeyOf, validateAttendee } from "./booking.utils";
 import ConfirmationView from "./confirmation";
@@ -81,6 +82,17 @@ export default function BookingFlow() {
   const [payError, setPayError] = useState<string | null>(null);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const content = useRef<HTMLDivElement>(null);
+  const seatRecords = useSeatRecords();
+  const adminTaken = useMemo(
+    () =>
+      takenSeatsForShow(
+        seatRecords,
+        selection.venueId,
+        selection.date,
+        selection.time,
+      ),
+    [seatRecords, selection.venueId, selection.date, selection.time],
+  );
 
   // Fade/slide each step in and return to the top of the page
   useGSAP(
@@ -239,6 +251,7 @@ export default function BookingFlow() {
                       seats={selection.seats}
                       onQuantity={setQuantity}
                       onSeats={setSeats}
+                      extraTaken={adminTaken}
                     />
                   )}
                 {step === 3 && (

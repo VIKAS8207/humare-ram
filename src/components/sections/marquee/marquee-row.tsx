@@ -13,7 +13,11 @@ type Props = {
 
 // Infinite marquee. Track holds two identical groups; sliding by -50% loops seamlessly.
 // Speeds up (and follows direction) with scroll velocity, pauses when off-screen.
-export default function MarqueeRow({ children, direction = 1, speed = 50 }: Props) {
+export default function MarqueeRow({
+  children,
+  direction = 1,
+  speed = 50,
+}: Props) {
   const root = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
 
@@ -28,7 +32,11 @@ export default function MarqueeRow({ children, direction = 1, speed = 50 }: Prop
         const tween =
           direction === 1
             ? gsap.to(el, { xPercent: -50, duration, ease: "none", repeat: -1 })
-            : gsap.fromTo(el, { xPercent: -50 }, { xPercent: 0, duration, ease: "none", repeat: -1 });
+            : gsap.fromTo(
+                el,
+                { xPercent: -50 },
+                { xPercent: 0, duration, ease: "none", repeat: -1 },
+              );
 
         let velocity = 0;
         let scrollDir = 1;

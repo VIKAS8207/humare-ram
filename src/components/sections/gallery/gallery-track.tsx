@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Mandala from "@/components/effects/mandala";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 import type { GalleryImage } from "./gallery-images";
@@ -138,8 +139,14 @@ export default function GalleryTrack({ title, subtitle, images }: Props) {
     <section
       id="gallery"
       ref={root}
-      className="relative w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_center,rgba(190,95,20,0.16),transparent_65%)] py-20 text-white md:py-28"
+      className="relative isolate w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_center,rgba(190,95,20,0.16),transparent_65%)] py-20 text-white md:py-28"
     >
+      <Mandala
+        className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        size="64rem"
+        opacity={0.06}
+        duration={360}
+      />
       <header className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-5 px-6 text-center">
         <h2 className="text-[clamp(2.25rem,6vw,5rem)] font-semibold leading-none tracking-tight text-white">
           {title}

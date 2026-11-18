@@ -99,7 +99,9 @@ export default function Embers({ className, density = 1 }: Props) {
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
-    const io = new IntersectionObserver(([entry]) => (visible = entry.isIntersecting));
+    const io = new IntersectionObserver(
+      ([entry]) => (visible = entry.isIntersecting),
+    );
     io.observe(canvas);
     resize();
     gsap.ticker.add(tick);
@@ -111,5 +113,11 @@ export default function Embers({ className, density = 1 }: Props) {
     };
   }, [density]);
 
-  return <canvas ref={ref} aria-hidden className={`pointer-events-none ${className ?? ""}`} />;
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden
+      className={`pointer-events-none ${className ?? ""}`}
+    />
+  );
 }

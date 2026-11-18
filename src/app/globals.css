@@ -60,3 +60,132 @@ html.lenis body {
 html.skip-loader [data-loader] {
   display: none !important;
 }
+
+/* Slowly turning, gradient-tinted mandala ornament (see components/effects/mandala.tsx) */
+.mandala {
+  background: conic-gradient(
+    from 0deg,
+    #ffb25c,
+    #e0603a,
+    #b8325a,
+    #e0603a,
+    #ffd08a,
+    #ffb25c
+  );
+  -webkit-mask: url("/images/trad-design.svg") center / contain no-repeat;
+  mask: url("/images/trad-design.svg") center / contain no-repeat;
+  animation: mandala-spin 240s linear infinite;
+  will-change: transform;
+}
+@keyframes mandala-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mandala {
+    animation: none;
+  }
+}
+
+/* "Divine" light behind Lord Ram (see components/effects/divine-light.tsx) */
+.divine-rays {
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 220, 140, 0.5) 0deg 2.2deg,
+    transparent 2.2deg 11.25deg
+  );
+  -webkit-mask: radial-gradient(
+    circle closest-side,
+    #000 0%,
+    rgba(0, 0, 0, 0.55) 35%,
+    transparent 100%
+  );
+  mask: radial-gradient(
+    circle closest-side,
+    #000 0%,
+    rgba(0, 0, 0, 0.55) 35%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+  animation: divine-spin 170s linear infinite;
+}
+.divine-rays-b {
+  background: repeating-conic-gradient(
+    from 6deg,
+    rgba(255, 170, 60, 0.4) 0deg 1.3deg,
+    transparent 1.3deg 18deg
+  );
+  animation-duration: 230s;
+  animation-direction: reverse;
+}
+.divine-halo {
+  background: radial-gradient(
+    circle,
+    rgba(255, 238, 175, 0.65) 0%,
+    rgba(255, 186, 72, 0.4) 22%,
+    rgba(232, 112, 30, 0.2) 45%,
+    transparent 68%
+  );
+  animation: divine-pulse 7s ease-in-out infinite;
+}
+.divine-dot {
+  border-radius: 9999px;
+  background: #ffeab0;
+  box-shadow: 0 0 6px 1px rgba(255, 200, 90, 0.85);
+}
+.divine-star {
+  background: #fff6d6;
+  clip-path: polygon(
+    50% 0,
+    62% 38%,
+    100% 50%,
+    62% 62%,
+    50% 100%,
+    38% 62%,
+    0 50%,
+    38% 38%
+  );
+  filter: drop-shadow(0 0 3px rgba(255, 210, 110, 0.9));
+}
+.divine-twinkle {
+  opacity: 0;
+  animation: divine-twinkle var(--d, 4s) ease-in-out var(--delay, 0s) infinite;
+}
+@keyframes divine-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes divine-pulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+@keyframes divine-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .divine-rays,
+  .divine-halo,
+  .divine-twinkle {
+    animation: none;
+  }
+  .divine-twinkle {
+    opacity: 0.45;
+  }
+}

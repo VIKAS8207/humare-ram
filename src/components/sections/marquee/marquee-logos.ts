@@ -24,7 +24,9 @@ export async function getMarqueeLogos(): Promise<Logo[]> {
   const logos = await Promise.all(
     files.map(async (file) => {
       try {
-        const { width, height } = imageSize(await readFile(path.join(DIR, file)));
+        const { width, height } = imageSize(
+          await readFile(path.join(DIR, file)),
+        );
         if (!width || !height) return null;
         return {
           src: `/images/marquee/${encodeURIComponent(file)}`,

@@ -49,5 +49,5 @@ export const CREW: { role: string; names: string }[] = [
   { role: "Lyrics", names: "Alok Shrivastava & Ram Kumar Singh" },
   { role: "Music", names: "Udbhav Ojha & Saurabh Mehta" },
   { role: "Music Label", names: "T-Series" },
-  { role: "Presented by", names: "Havells" },
+  { role: "Presented by", names: "Shri Ram Jewellers" },
 ];

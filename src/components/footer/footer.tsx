@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Mandala from "@/components/effects/mandala";
 import BookLink from "@/components/transitions/book-link";
 import { HERO_LOGO } from "@/lib/preload";
 import { IMAGES } from "@/config/images";
@@ -12,7 +13,8 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="relative w-full bg-neutral-950 text-white">
+    <footer className="relative isolate w-full overflow-hidden bg-neutral-950 text-white">
+      <Mandala className="-bottom-60 -right-60" size="40rem" duration={300} />
       <div className="mx-auto max-w-7xl px-6 pb-8 pt-20 md:pt-28">
         <div className="grid gap-14 md:grid-cols-[1.4fr_2fr] md:gap-20">
           {/* Brand */}
@@ -68,12 +70,12 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <span className="uppercase tracking-[0.3em]">Presented by</span>
             <Image
-              src={IMAGES.havells.src}
-              alt="Havells"
-              width={IMAGES.havells.width}
-              height={IMAGES.havells.height}
-              sizes="5rem"
-              className="h-auto w-16 rounded-sm"
+              src={IMAGES.sponsor.src}
+              alt="Shri Ram Jewellers"
+              width={IMAGES.sponsor.width}
+              height={IMAGES.sponsor.height}
+              sizes="6rem"
+              className="h-auto w-20"
             />
           </div>
 

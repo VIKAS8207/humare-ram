@@ -1,15 +1,20 @@
 export const STEPS = ["Venue", "Date & Time", "Seats", "Review & Pay"] as const;
 
-type Props = { step: number; onStepClick: (index: number) => void };
+type Props = {
+  step: number;
+  onStepClick: (index: number) => void;
+  /** Custom step names (default: the public booking steps) */
+  steps?: readonly string[];
+};
 
 // Numbered progress bar. Completed steps are clickable to go back.
-export default function Stepper({ step, onStepClick }: Props) {
+export default function Stepper({ step, onStepClick, steps = STEPS }: Props) {
   return (
     <ol
       className="flex items-center gap-2 md:gap-4"
       aria-label="Booking progress"
     >
-      {STEPS.map((label, i) => {
+      {steps.map((label, i) => {
         const done = i < step;
         const active = i === step;
         return (
@@ -44,7 +49,7 @@ export default function Stepper({ step, onStepClick }: Props) {
                 {label}
               </span>
             </button>
-            {i < STEPS.length - 1 && (
+            {i < steps.length - 1 && (
               <span
                 aria-hidden
                 className={`h-px flex-1 ${done ? "bg-bk-gold/10" : "bg-bk-line"}`}

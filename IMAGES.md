@@ -6,9 +6,9 @@ Fixed image paths are listed in one file: [`src/config/images.ts`](src/config/im
 | Folder | What goes here | How it works |
 | --- | --- | --- |
 | `loader/` | Loading-screen background (`loader-bg.png`) and the two-characters cutout (`humareRanlogofacing.png`) | Fixed names. Overwrite the file, keep the name. |
-| `hero/` | Main logo (`humareRanlogo.png`) and sponsor logo (`havells-logo.jpg`) | Fixed names. Overwrite the file, keep the name. |
+| `hero/` | Main logo (`humareRanlogo.png`) and sponsor logo (`sriramjewelleers.png`, white on transparent) and Rotary logo (`rotary.png`) | Fixed names. Overwrite the file, keep the name. |
 | `spotlight/` | Ravan (`ravan.png`) and Ram (`ram.png`) cutouts | Fixed names. Overwrite the file, keep the name. |
-| `marquee/` | Partner logos | **Automatic.** Drop files in; shown in filename order, greyscale. |
+| `marquee/` | Partner logos | **Automatic.** Drop files in; shown in filename order as light-grey silhouettes (works for dark or coloured logos on a transparent background). |
 | `singers/` | Singer photos | **Automatic.** Name the file after the singer: `shankar-mahadevan.jpg`, `sonu-nigam.jpg`, `kailash-kher.jpg`. Without a photo a monogram is shown. |
 | `cast/` | Cast photos | **Automatic.** Name the file after the person: `rahul-bhuchar.jpg`, `ashutosh-rana.jpg`, … (the `slug` in `cast-crew.data.ts`). Ram and Ravan use their cutouts from `spotlight/` by default. Without a photo a monogram is shown. |
 | `gallery/` | Carousel photos (landscape works best) | **Automatic.** Drop files in; shown in filename order. |

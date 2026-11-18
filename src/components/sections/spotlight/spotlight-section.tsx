@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef } from "react";
+import Mandala from "@/components/effects/mandala";
+import DivineLight from "@/components/effects/divine-light";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 import type { SpotlightData } from "./spotlight.data";
@@ -21,6 +23,7 @@ export default function SpotlightSection({
   body,
   image,
   glow,
+  divine,
   reverse = false,
 }: Props) {
   const root = useRef<HTMLElement>(null);
@@ -71,8 +74,14 @@ export default function SpotlightSection({
     <section
       id={id}
       ref={root}
-      className="relative w-full overflow-hidden bg-neutral-950 text-white"
+      className="relative isolate w-full overflow-hidden bg-neutral-950 text-white"
     >
+      <Mandala
+        className={`top-1/2 -translate-y-1/2 ${reverse ? "-right-64" : "-left-64"}`}
+        size="52rem"
+        reverse={reverse}
+        duration={280}
+      />
       <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-4 px-6 md:grid-cols-2 md:gap-10">
         {/* Copy */}
         <div
@@ -126,6 +135,7 @@ export default function SpotlightSection({
               background: `radial-gradient(circle, ${glow} 0%, transparent 62%)`,
             }}
           />
+          {divine && <DivineLight origin="43% 21%" />}
           <Image
             src={image.src}
             alt={image.alt}

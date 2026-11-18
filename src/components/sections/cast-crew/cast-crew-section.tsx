@@ -1,4 +1,5 @@
 import RevealSection from "@/components/ui/reveal-section";
+import Mandala from "@/components/effects/mandala";
 import { getSlugImages } from "@/lib/slug-images";
 import CastCard from "./cast-card";
 import { CAST, CAST_CREW_HEADER, CREW } from "./cast-crew.data";
@@ -13,8 +14,9 @@ export default async function CastCrewSection() {
   return (
     <RevealSection
       id="cast"
-      className="relative w-full overflow-hidden bg-neutral-950 px-6 py-24 text-white md:py-36"
+      className="relative isolate w-full overflow-hidden bg-neutral-950 px-6 py-24 text-white md:py-36"
     >
+      <Mandala className="-right-72 -top-40" size="46rem" duration={300} />
       <div className="mx-auto flex max-w-6xl flex-col gap-20 md:gap-28">
         {/* Header */}
         <header className="flex flex-col items-center gap-6 text-center">

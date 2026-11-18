@@ -33,6 +33,7 @@ export default function HeroSection() {
             "-=0.4",
           )
           .from(".hero-sub", { y: 24, opacity: 0, duration: 0.8 }, "-=0.5")
+          .from(".hero-rotary", { y: 24, opacity: 0, duration: 0.8 }, "-=0.5")
           .from(".hero-cta", { y: 24, opacity: 0, duration: 0.8 }, "-=0.6");
 
         // Wait for loader curtain before playing intro
@@ -100,13 +101,13 @@ export default function HeroSection() {
       <div className="hero-content relative z-10 flex flex-col items-center gap-8 px-6 text-center md:gap-12 will-change-transform">
         <div className="flex flex-col items-center gap-3 md:gap-4">
           <Image
-            src={IMAGES.havells.src}
-            alt="Havells"
-            width={IMAGES.havells.width}
-            height={IMAGES.havells.height}
+            src={IMAGES.sponsor.src}
+            alt="Shri Ram Jewellers"
+            width={IMAGES.sponsor.width}
+            height={IMAGES.sponsor.height}
             priority
-            sizes="(min-width: 768px) 6rem, 5rem"
-            className="hero-brand h-auto w-20 select-none rounded-sm md:w-24"
+            sizes="(min-width: 768px) 8rem, 6rem"
+            className="hero-brand h-auto w-24 select-none md:w-32"
           />
           <p className="hero-brand text-xs font-medium uppercase tracking-[0.35em] opacity-80 md:text-sm">
             Presents
@@ -123,9 +124,22 @@ export default function HeroSection() {
             className="h-auto w-full select-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.25)]"
           />
         </h1>
-        <p className="hero-sub -mt-4 max-w-xl text-lg md:-mt-6 opacity-70 md:text-xl">
-          Discover Ramayan&apos;s <br></br> untold chapters, live on stage
-        </p>
+        {/* Tagline and Rotary logo side by side (stacked on small phones) */}
+        <div className="-mt-4 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 md:-mt-6">
+          <p className="hero-sub text-center text-sm opacity-70 sm:text-right md:text-base">
+            Discover Ramayan&apos;s <br /> untold chapters, live on stage
+          </p>
+          <span aria-hidden className="hidden h-10 w-px bg-white/25 sm:block" />
+          {/* The artwork is dark blue, so it is brightened to stay readable on the dark hero */}
+          <Image
+            src={IMAGES.rotary.src}
+            alt="Rotary International District 3261 — Create Lasting Impact, celebrating 30 years"
+            width={IMAGES.rotary.width}
+            height={IMAGES.rotary.height}
+            sizes="(min-width: 768px) 14rem, 10rem"
+            className="hero-rotary h-auto w-40 select-none brightness-[1.9] md:w-56"
+          />
+        </div>
         <BookLink
           href={BOOK_NOW_HREF}
           className="hero-cta rounded-full bg-white px-8 py-3 text-black transition-transform hover:scale-105"

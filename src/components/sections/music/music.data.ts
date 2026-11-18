@@ -4,7 +4,8 @@
 export const MUSIC_HEADER = {
   eyebrow: "The Sound of the Divine",
   title: "Legends of Music",
-  subtitle: "Original compositions released on T-Series — voices that make this epic eternal",
+  subtitle:
+    "Original compositions released on T-Series — voices that make this epic eternal",
 };
 
 export const MUSIC_EP = {

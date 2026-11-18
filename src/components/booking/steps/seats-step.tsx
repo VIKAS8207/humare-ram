@@ -30,12 +30,18 @@ type Props = {
   seats: string[];
   onQuantity: (n: number) => void;
   onSeats: (seats: string[]) => void;
+  /** Seats already taken by blocks / holds / reservations (on top of the sample "sold" ones) */
+  extraTaken?: ReadonlySet<string>;
+  /** Most seats one booking may have (default: the public limit) */
+  maxSeats?: number;
+  /** Public site: past the limit, show the "contact us for groups" popup */
+  groupContact?: boolean;
 };
 
 const ZOOMS = [1, 1.5, 2, 3, 4];
 
 // Picks N seats next to each other, as close to the stage centre as possible.
-function bestAvailable(showKey: string, n: number): string[] {
+function bestAvailable(isTaken: (id: string) => boolean, n: number): string[] {
   for (const row of ROW_ORDER) {
     const rowSeats = SEATS.filter((s) => s.row === row).sort(
       (a, b) => a.x - b.x,
@@ -48,7 +54,7 @@ function bestAvailable(showKey: string, n: number): string[] {
         (s, k) =>
           k === 0 || (s.x - run[k - 1].x < 24 && s.n === run[k - 1].n + 1),
       );
-      if (!contiguous || run.some((s) => isSeatTaken(showKey, s.id))) continue;
+      if (!contiguous || run.some((s) => isTaken(s.id))) continue;
       const centre = run.reduce((sum, s) => sum + s.x, 0) / n;
       const score = Math.abs(centre - mid);
       if (!best || score < best.score)
@@ -63,10 +69,14 @@ function QuantityPicker({
   current,
   onPick,
   onClose,
+  max,
+  groupContact,
 }: {
   current: number | null;
   onPick: (n: number) => void;
   onClose?: () => void;
+  max: number;
+  groupContact: boolean;
 }) {
   const [n, setN] = useState(current ?? 2);
   const [groupOpen, setGroupOpen] = useState(false);
@@ -119,8 +129,9 @@ function QuantityPicker({
             type="button"
             className={step}
             aria-label="More people"
+            disabled={n >= max && !groupContact}
             onClick={() =>
-              n >= MAX_SEATS ? setGroupOpen(true) : setN((v) => v + 1)
+              n >= max ? groupContact && setGroupOpen(true) : setN((v) => v + 1)
             }
           >
             +
@@ -128,7 +139,7 @@ function QuantityPicker({
         </div>
 
         <p className="mt-8 rounded-lg bg-bk-gold/10 px-4 py-3 text-sm text-bk-ink">
-          You can book up to {MAX_SEATS} seats in this transaction.
+          You can book up to {max} seats in this transaction.
         </p>
 
         <button
@@ -139,7 +150,7 @@ function QuantityPicker({
           Select {n} seat{n > 1 ? "s" : ""}
         </button>
 
-        {/* More than MAX_SEATS: point them to the group-booking contact */}
+        {/* More than the limit: point them to the group-booking contact */}
         {groupOpen && (
           <div
             role="alertdialog"
@@ -148,10 +159,10 @@ function QuantityPicker({
           >
             <div className="flex w-full flex-col gap-4 rounded-xl border border-bk-line bg-bk-surface p-6 text-center shadow-xl">
               <h4 className="text-xl font-semibold tracking-tight">
-                Booking for more than {MAX_SEATS}?
+                Booking for more than {max}?
               </h4>
               <p className="text-sm text-bk-muted">
-                For bookings of more than {MAX_SEATS} seats, please contact:
+                For bookings of more than {max} seats, please contact:
               </p>
               <div className="flex flex-col gap-1">
                 <span className="font-semibold">
@@ -191,7 +202,12 @@ export default function SeatsStep({
   seats,
   onQuantity,
   onSeats,
+  extraTaken,
+  maxSeats = MAX_SEATS,
+  groupContact = true,
 }: Props) {
+  const isTaken = (id: string) =>
+    isSeatTaken(showKey, id) || Boolean(extraTaken?.has(id));
   const [pickerOpen, setPickerOpen] = useState(quantity === null);
   const [zoom, setZoom] = useState(1);
   const scroller = useRef<HTMLDivElement>(null);
@@ -276,7 +292,7 @@ export default function SeatsStep({
   const remaining = quantity === null ? 0 : quantity - seats.length;
 
   const toggle = (id: string) => {
-    if (quantity === null || isSeatTaken(showKey, id)) return;
+    if (quantity === null || isTaken(id)) return;
     if (selected.has(id)) {
       setNotice("");
       onSeats(seats.filter((s) => s !== id));
@@ -300,7 +316,7 @@ export default function SeatsStep({
 
   const suggest = () => {
     if (quantity === null) return;
-    const ids = bestAvailable(showKey, quantity);
+    const ids = bestAvailable(isTaken, quantity);
     setNotice(
       ids.length
         ? ""
@@ -458,7 +474,7 @@ export default function SeatsStep({
 
             {/* Seats */}
             {SEATS.map((s) => {
-              const taken = isSeatTaken(showKey, s.id);
+              const taken = isTaken(s.id);
               const isSel = selected.has(s.id);
               const cat = categoryOfSeat(s.id);
               return (
@@ -520,6 +536,8 @@ export default function SeatsStep({
 
         {pickerOpen && (
           <QuantityPicker
+            max={maxSeats}
+            groupContact={groupContact}
             current={quantity}
             onPick={pick}
             onClose={quantity !== null ? () => setPickerOpen(false) : undefined}

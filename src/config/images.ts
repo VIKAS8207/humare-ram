@@ -33,7 +33,14 @@ export const IMAGES = {
     width: 2485,
     height: 1316,
   },
-  havells: { src: "/images/hero/havells-logo.jpg", width: 750, height: 262 },
+  // Sponsor ("Presented by") logo: white on transparent, Shri Ram Jewellers
+  sponsor: {
+    src: "/images/hero/sriramjewelleers.png",
+    width: 7756,
+    height: 6616,
+  },
+  // Rotary partner logo (dark-blue artwork, brightened in CSS for the dark hero)
+  rotary: { src: "/images/hero/rotary.png", width: 524, height: 99 },
 
   // Spotlight sections
   ravan: { src: "/images/spotlight/ravan.png", width: 1353, height: 2314 },
