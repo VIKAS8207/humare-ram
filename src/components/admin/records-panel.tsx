@@ -10,6 +10,7 @@ import {
   type SeatRecord,
   type SeatRecordType,
 } from "@/lib/seat-store";
+import Select from "@/components/ui/select";
 import { PAYMENT_MODES } from "./tickets/payment-modes";
 
 const TABS: { type: SeatRecordType; label: string; empty: string }[] = [
@@ -42,10 +43,10 @@ function Modal({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 grid place-items-center bg-bk-ink/40 p-4 backdrop-blur-sm"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-900 p-6 shadow-2xl">
+      <div className="w-full max-w-md rounded-2xl border border-bk-line bg-bk-surface p-6 shadow-2xl">
         <h3 className="mb-5 text-xl font-semibold tracking-tight">{title}</h3>
         {children}
       </div>
@@ -91,11 +92,11 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
   return (
     <section aria-label="Seat records" className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
+        <h2 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
           Seat activity
         </h2>
         {counts.hold > 0 && (
-          <p className="text-sm text-amber-200">
+          <p className="text-sm text-bk-gold">
             {counts.hold} on hold · {inr(dueTotal)} waiting for payment
           </p>
         )}
@@ -111,8 +112,8 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
             onClick={() => setTab(t.type)}
             className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
               tab === t.type
-                ? "bg-orange-400 text-black"
-                : "border border-white/15 text-white/70 hover:border-white/40"
+                ? "bg-bk-accent text-bk-accent-ink"
+                : "border border-bk-line text-bk-muted hover:border-bk-ink"
             }`}
           >
             {t.label} <span className="opacity-70">({counts[t.type]})</span>
@@ -121,7 +122,7 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
       </div>
 
       {list.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-white/15 p-8 text-center text-sm text-white/50">
+        <p className="rounded-2xl border border-dashed border-bk-line p-8 text-center text-sm text-bk-muted">
           {TABS.find((t) => t.type === tab)!.empty}
         </p>
       ) : (
@@ -131,36 +132,36 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
             return (
               <li
                 key={r.id}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 md:flex-row md:items-center md:justify-between"
+                className="flex flex-col gap-4 rounded-2xl border border-bk-line bg-bk-surface p-5 md:flex-row md:items-center md:justify-between"
               >
                 <div className="flex min-w-0 flex-col gap-1.5">
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="text-lg font-semibold">
                       {r.person.name}
                     </span>
-                    <span className="text-sm text-white/50">
+                    <span className="text-sm text-bk-muted">
                       {r.person.phone}
                     </span>
-                    <span className="rounded-full border border-white/15 px-2.5 py-0.5 text-[0.65rem] uppercase tracking-[0.2em] text-white/50">
+                    <span className="rounded-full border border-bk-line px-2.5 py-0.5 text-[0.65rem] uppercase tracking-[0.2em] text-bk-muted">
                       {r.id}
                     </span>
                   </div>
-                  <p className="text-sm text-white/70">
+                  <p className="text-sm text-bk-muted">
                     {venue ? `${venue.name}, ${venue.city}` : r.venueId} ·{" "}
                     {dateParts(r.date).long} · {formatTime(r.time)}
                   </p>
                   <p className="text-sm">
-                    <span className="text-white/50">Seats:</span>{" "}
+                    <span className="text-bk-muted">Seats:</span>{" "}
                     {r.seats.join(", ")}
                     {r.type !== "reserve" && (
                       <>
-                        <span className="mx-2 text-white/25">|</span>
-                        <span className="text-white/50">
+                        <span className="mx-2 text-bk-line">|</span>
+                        <span className="text-bk-muted">
                           {r.type === "hold" ? "Due:" : "Received:"}
                         </span>{" "}
                         {inr(r.amount)}
                         {r.paymentMode && (
-                          <span className="text-white/50">
+                          <span className="text-bk-muted">
                             {" "}
                             ({r.paymentMode})
                           </span>
@@ -169,11 +170,11 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
                     )}
                   </p>
                   {r.person.note && (
-                    <p className="text-sm text-white/50">
+                    <p className="text-sm text-bk-muted">
                       Note: {r.person.note}
                     </p>
                   )}
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-bk-muted">
                     {r.convertedAt
                       ? `Moved to block ${fmtWhen(r.convertedAt)}`
                       : fmtWhen(r.createdAt)}{" "}
@@ -186,14 +187,14 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
                     <button
                       type="button"
                       onClick={() => openConvert(r)}
-                      className="rounded-full bg-orange-400 px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-105"
+                      className="rounded-full bg-bk-accent px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105"
                     >
                       Payment received · Block
                     </button>
                     <button
                       type="button"
                       onClick={() => setReleasing(r)}
-                      className="rounded-full border border-white/20 px-5 py-2.5 text-sm font-medium text-white/80 transition-colors hover:border-red-400/60 hover:text-red-300"
+                      className="rounded-full border border-bk-line px-5 py-2.5 text-sm font-medium text-bk-ink/80 transition-colors hover:border-red-600/60 hover:text-red-700"
                     >
                       Release
                     </button>
@@ -209,51 +210,43 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
       {converting && (
         <Modal title="Move to block" onClose={() => setConverting(null)}>
           <div className="flex flex-col gap-4 text-sm">
-            <p className="text-white/70">
+            <p className="text-bk-muted">
               {converting.person.name} · {converting.seats.join(", ")} ·{" "}
               {inr(converting.amount)}
             </p>
-            <label className="flex flex-col gap-2">
-              <span className="text-white/60">Payment received by</span>
-              <select
+            <div className="flex flex-col gap-2">
+              <span className="text-bk-muted">Payment received by</span>
+              <Select
                 value={mode}
-                onChange={(e) => {
-                  setMode(e.target.value);
+                onChange={(v) => {
+                  setMode(v);
                   setModeError(false);
                 }}
-                className={`rounded-xl border bg-white/[0.04] px-4 py-3 text-base text-white outline-none focus:border-orange-400 ${
-                  modeError ? "border-red-400" : "border-white/15"
-                }`}
-              >
-                <option value="">Select…</option>
-                {PAYMENT_MODES.map((m) => (
-                  <option key={m} value={m} className="text-black">
-                    {m}
-                  </option>
-                ))}
-              </select>
+                invalid={modeError}
+                options={PAYMENT_MODES.map((m) => ({ value: m, label: m }))}
+              />
               {modeError && (
-                <span className="text-xs text-red-400">
+                <span className="text-xs text-red-700">
                   Choose how the payment was received
                 </span>
               )}
-            </label>
-            <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-              <span className="text-white/50">Processed by</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-bk-line bg-bk-surface px-4 py-3">
+              <span className="text-bk-muted">Processed by</span>
               <span className="font-semibold">{adminName}</span>
             </div>
             <div className="mt-2 flex gap-3">
               <button
                 type="button"
                 onClick={() => setConverting(null)}
-                className="rounded-full border border-white/20 px-6 py-3 font-medium"
+                className="rounded-full border border-bk-line px-6 py-3 font-medium"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmConvert}
-                className="flex-1 rounded-full bg-orange-400 px-6 py-3 font-semibold text-black"
+                className="flex-1 rounded-full bg-bk-accent px-6 py-3 font-semibold text-white"
               >
                 Confirm & block
               </button>
@@ -266,7 +259,7 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
       {releasing && (
         <Modal title="Release these seats?" onClose={() => setReleasing(null)}>
           <div className="flex flex-col gap-4 text-sm">
-            <p className="text-white/70">
+            <p className="text-bk-muted">
               {releasing.seats.join(", ")} held for {releasing.person.name} go
               back on sale. This can&apos;t be undone.
             </p>
@@ -274,7 +267,7 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
               <button
                 type="button"
                 onClick={() => setReleasing(null)}
-                className="rounded-full border border-white/20 px-6 py-3 font-medium"
+                className="rounded-full border border-bk-line px-6 py-3 font-medium"
               >
                 Keep holding
               </button>
@@ -284,7 +277,7 @@ export default function RecordsPanel({ adminName }: { adminName: string }) {
                   removeSeatRecord(releasing.id);
                   setReleasing(null);
                 }}
-                className="flex-1 rounded-full bg-red-500 px-6 py-3 font-semibold text-white"
+                className="flex-1 rounded-full bg-red-600 px-6 py-3 font-semibold text-white"
               >
                 Release seats
               </button>

@@ -1,25 +1,16 @@
 // Ticket actions shown in the admin "Tickets" menu. The slug is the URL:
 //   /admin/tickets/<slug>
+// "Booking" covers Hold, Reserve and Block (picked on the page itself).
 export const TICKET_ACTIONS = [
   {
-    slug: "block",
-    label: "Block",
-    description: "Take seats out of sale so customers cannot book them.",
-  },
-  {
-    slug: "hold",
-    label: "Hold",
+    slug: "booking",
+    label: "Booking",
     description:
-      "Hold seats for a limited time before they are released or booked.",
-  },
-  {
-    slug: "reserve",
-    label: "Reserve",
-    description: "Reserve seats for a guest or partner without online payment.",
+      "Hold, reserve or block seats. Blocking also records how the payment was received.",
   },
   {
     slug: "cancel",
-    label: "Cancel Ticket",
+    label: "Cancel",
     description: "Cancel an existing booking using its booking reference.",
   },
 ] as const;

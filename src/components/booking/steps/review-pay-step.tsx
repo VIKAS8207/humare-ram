@@ -34,11 +34,11 @@ const FIELDS: {
   },
   {
     key: "email",
-    label: "Email",
+    label: "Email (optional)",
     type: "email",
     autoComplete: "email",
     inputMode: "email",
-    placeholder: "Tickets are sent here",
+    placeholder: "Tickets are also sent here",
   },
   {
     key: "phone",

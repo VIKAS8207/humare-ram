@@ -45,7 +45,7 @@ export default function Petals() {
       {PETALS.map((p, i) => (
         <span
           key={i}
-          className="petal-drift absolute left-0 top-0"
+          className={`petal-drift absolute left-0 top-0 ${i >= 18 ? "max-md:hidden" : ""}`}
           style={
             {
               "--sx": `${p.sx}cqw`,

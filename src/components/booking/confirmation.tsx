@@ -27,8 +27,14 @@ export default function ConfirmationView({
           Booking confirmed
         </h1>
         <p className="text-bk-muted">
-          A confirmation will be sent to{" "}
-          <span className="text-bk-ink">{attendee.email}</span>.
+          {attendee.email.trim() ? (
+            <>
+              A confirmation will be sent to{" "}
+              <span className="text-bk-ink">{attendee.email}</span>.
+            </>
+          ) : (
+            "Your booking is confirmed."
+          )}
         </p>
       </div>
 

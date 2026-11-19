@@ -65,6 +65,27 @@ export async function endSession() {
   (await cookies()).delete(SESSION_COOKIE);
 }
 
+// Development only: while ADMIN_AUTH_BYPASS is on the admin opens without a
+// login, so "Logout" would otherwise appear to do nothing. This marker cookie
+// makes the login page show after a logout until the next sign-in.
+const SIGNED_OUT_COOKIE = "hr_admin_out";
+
+export async function markSignedOut() {
+  (await cookies()).set(SIGNED_OUT_COOKIE, "1", {
+    httpOnly: true,
+    sameSite: "strict",
+    path: "/",
+  });
+}
+
+export async function clearSignedOut() {
+  (await cookies()).delete(SIGNED_OUT_COOKIE);
+}
+
+export async function isSignedOut() {
+  return (await cookies()).get(SIGNED_OUT_COOKIE)?.value === "1";
+}
+
 export async function isAuthenticated() {
   const c = config();
   if (!c) return false;

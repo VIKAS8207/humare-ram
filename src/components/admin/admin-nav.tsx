@@ -11,7 +11,7 @@ import { TICKET_ACTIONS } from "./tickets.data";
 const pill =
   "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors";
 
-// Admin top bar:  logo · Dashboard · Tickets ▾ (Block, Hold, Reserve, Cancel Ticket) ······ Logout
+// Admin top bar:  logo · Dashboard · Tickets ▾ (Booking, Cancel) ······ Logout
 export default function AdminNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -36,7 +36,7 @@ export default function AdminNav() {
   }, [open]);
 
   return (
-    <header className="relative z-20 border-b border-white/10 bg-neutral-950 text-white">
+    <header className="relative z-20 border-b border-bk-line bg-bk-bg text-bk-ink">
       <nav
         aria-label="Admin"
         className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-2 gap-y-3 px-6 py-3"
@@ -54,7 +54,7 @@ export default function AdminNav() {
             sizes="96px"
             className="h-9 w-auto select-none"
           />
-          <span className="rounded-full border border-orange-400/50 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-orange-300">
+          <span className="rounded-full border border-bk-accent/50 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-bk-accent">
             Admin
           </span>
         </Link>
@@ -65,8 +65,8 @@ export default function AdminNav() {
           aria-current={onDashboard ? "page" : undefined}
           className={`${pill} ${
             onDashboard
-              ? "bg-orange-400 text-black"
-              : "text-white/70 hover:bg-white/10 hover:text-white"
+              ? "bg-bk-accent text-bk-accent-ink"
+              : "text-bk-muted hover:bg-bk-ink/5 hover:text-bk-ink"
           }`}
         >
           Dashboard
@@ -81,8 +81,8 @@ export default function AdminNav() {
             onClick={() => setOpen((v) => !v)}
             className={`${pill} ${
               onTickets || open
-                ? "bg-white/10 text-white"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+                ? "bg-bk-ink/5 text-bk-ink"
+                : "text-bk-muted hover:bg-bk-ink/5 hover:text-bk-ink"
             }`}
           >
             Tickets
@@ -106,7 +106,7 @@ export default function AdminNav() {
             <ul
               role="menu"
               aria-label="Tickets"
-              className="absolute left-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-neutral-900 p-1.5 shadow-2xl shadow-black/60"
+              className="absolute left-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-xl border border-bk-line bg-bk-surface p-1.5 shadow-2xl shadow-bk-ink/20"
             >
               {TICKET_ACTIONS.map((a, i) => {
                 const active = pathname === `/admin/tickets/${a.slug}`;
@@ -114,7 +114,7 @@ export default function AdminNav() {
                   <li key={a.slug} role="none">
                     {/* Cancel Ticket is the destructive one: separate it visually */}
                     {a.slug === "cancel" && i > 0 && (
-                      <div className="my-1.5 h-px bg-white/10" />
+                      <div className="my-1.5 h-px bg-bk-ink/5" />
                     )}
                     <Link
                       role="menuitem"
@@ -123,10 +123,10 @@ export default function AdminNav() {
                       aria-current={active ? "page" : undefined}
                       className={`block rounded-lg px-3 py-2.5 text-sm transition-colors ${
                         active
-                          ? "bg-orange-400 text-black"
+                          ? "bg-bk-accent text-bk-accent-ink"
                           : a.slug === "cancel"
-                            ? "text-red-300 hover:bg-red-400/10"
-                            : "text-white/80 hover:bg-white/10 hover:text-white"
+                            ? "text-red-700 hover:bg-red-600/10"
+                            : "text-bk-ink/80 hover:bg-bk-ink/5 hover:text-bk-ink"
                       }`}
                     >
                       {a.label}
@@ -142,7 +142,7 @@ export default function AdminNav() {
         <form action={logout} className="ml-auto">
           <button
             type="submit"
-            className="rounded-full border border-white/20 px-5 py-2 text-sm font-medium transition-colors hover:border-white/50"
+            className="rounded-full border border-bk-line px-5 py-2 text-sm font-medium transition-colors hover:border-bk-ink"
           >
             Logout
           </button>

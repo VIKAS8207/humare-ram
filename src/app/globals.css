@@ -12,8 +12,8 @@
   --font-mono: var(--font-inter);
 
   /* Booking page palette (beige theme, used only by /book) */
-  --color-bk-bg: #f1e7d3;
-  --color-bk-surface: #faf4e6;
+  --color-bk-bg: #fcf8f0;
+  --color-bk-surface: #fffcf6;
   --color-bk-ink: #2b1d12;
   --color-bk-muted: #7a6650;
   --color-bk-line: #d8c8aa;
@@ -27,6 +27,39 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+/* Booking page background: plain cream with soft dusty-brown patches here and
+   there, heaviest along the bottom (like a watercolour wash). */
+.bk-page-bg {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--color-bk-bg);
+  background-image:
+    radial-gradient(ellipse 38% 26% at 4% 8%, rgb(185 130 80 / 0.2), transparent 70%),
+    radial-gradient(ellipse 30% 24% at 98% 28%, rgb(180 125 75 / 0.18), transparent 70%),
+    radial-gradient(ellipse 34% 22% at 6% 62%, rgb(190 135 85 / 0.18), transparent 70%),
+    radial-gradient(ellipse 45% 22% at 24% 96%, rgb(200 135 75 / 0.32), transparent 72%),
+    radial-gradient(ellipse 40% 20% at 64% 100%, rgb(185 120 65 / 0.36), transparent 72%),
+    radial-gradient(ellipse 36% 24% at 100% 94%, rgb(195 130 70 / 0.32), transparent 72%);
+  background-attachment: fixed;
+}
+/* Grain + fluffy edges: speckled noise shown only inside the same patches */
+.bk-page-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.6;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .34 0 0 0 0 .18 0 0 0 2.2 -.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-image:
+    radial-gradient(ellipse 40% 28% at 4% 8%, #000, transparent 75%),
+    radial-gradient(ellipse 32% 26% at 98% 28%, #000, transparent 75%),
+    radial-gradient(ellipse 36% 24% at 6% 62%, #000, transparent 75%),
+    radial-gradient(ellipse 48% 26% at 24% 96%, #000, transparent 78%),
+    radial-gradient(ellipse 42% 24% at 64% 100%, #000, transparent 78%),
+    radial-gradient(ellipse 38% 28% at 100% 94%, #000, transparent 78%);
 }
 
 body {
@@ -144,6 +177,12 @@ html.skip-loader [data-loader] {
   }
   to {
     transform: perspective(240px) rotate3d(var(--ax), var(--ay), var(--az), 360deg);
+  }
+}
+/* Phones: smaller petals (fewer are shown, see petals.tsx) */
+@media (max-width: 767px) {
+  .petal {
+    scale: 0.55;
   }
 }
 @media (prefers-reduced-motion: reduce) {

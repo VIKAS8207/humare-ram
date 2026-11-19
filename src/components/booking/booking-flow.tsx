@@ -170,7 +170,7 @@ export default function BookingFlow() {
   const back = () => setStep((s) => Math.max(0, s - 1));
 
   return (
-    <div className="min-h-screen bg-bk-bg text-bk-ink">
+    <div className="bk-page-bg min-h-screen text-bk-ink">
       <header className="border-b border-bk-line">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" aria-label="Humare Ram — home">

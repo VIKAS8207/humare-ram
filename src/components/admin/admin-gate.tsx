@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { ADMIN_AUTH_BYPASS } from "@/config/admin";
-import { isAuthenticated, isConfigured } from "@/lib/admin-auth";
+import { isAuthenticated, isConfigured, isSignedOut } from "@/lib/admin-auth";
 import AdminNav from "./admin-nav";
 import LoginForm from "./login-form";
 
@@ -10,11 +10,12 @@ import LoginForm from "./login-form";
 // Reads the session cookie, so it renders per request (inside Suspense).
 
 async function Gate({ children }: { children: React.ReactNode }) {
-  if (!ADMIN_AUTH_BYPASS && !(await isAuthenticated())) {
+  const bypass = ADMIN_AUTH_BYPASS && !(await isSignedOut());
+  if (!bypass && !(await isAuthenticated())) {
     return <LoginForm configured={isConfigured()} />;
   }
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
+    <div className="bk-page-bg min-h-screen text-bk-ink">
       <AdminNav />
       <main className="mx-auto max-w-6xl px-6 py-12 md:py-16">{children}</main>
     </div>
@@ -23,7 +24,7 @@ async function Gate({ children }: { children: React.ReactNode }) {
 
 export default function AdminGate({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-neutral-950" />}>
+    <Suspense fallback={<div className="bk-page-bg min-h-screen" />}>
       <Gate>{children}</Gate>
     </Suspense>
   );

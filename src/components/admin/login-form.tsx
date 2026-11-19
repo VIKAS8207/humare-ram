@@ -12,10 +12,10 @@ export default function LoginForm({ configured }: { configured: boolean }) {
   const [show, setShow] = useState(false);
 
   const input =
-    "w-full rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-base text-white outline-none transition-colors placeholder:text-white/30 focus:border-orange-400";
+    "w-full rounded-xl border border-bk-line bg-bk-surface px-4 py-3 text-base text-bk-ink outline-none transition-colors placeholder:text-bk-muted/60 focus:border-bk-accent";
 
   return (
-    <main className="grid min-h-screen place-items-center bg-neutral-950 bg-[radial-gradient(ellipse_at_top,rgba(190,95,20,0.16),transparent_60%)] px-6 py-16 text-white">
+    <main className="grid min-h-screen place-items-center bk-page-bg px-6 py-16 text-bk-ink">
       <div className="flex w-full max-w-sm flex-col gap-8">
         <div className="flex flex-col items-center gap-5 text-center">
           <Image
@@ -31,30 +31,30 @@ export default function LoginForm({ configured }: { configured: boolean }) {
             <h1 className="text-2xl font-semibold tracking-tight">
               Admin sign in
             </h1>
-            <p className="text-sm text-white/50">Authorised staff only.</p>
+            <p className="text-sm text-bk-muted">Authorised staff only.</p>
           </div>
         </div>
 
         <form
           action={action}
-          className="flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+          className="flex flex-col gap-5 rounded-2xl border border-bk-line bg-bk-surface p-6"
         >
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-white/70">Email</span>
+            <span className="text-bk-muted">Username</span>
             <input
               name="email"
-              type="email"
+              type="text"
               required
               autoComplete="username"
               autoFocus
-              placeholder="you@example.com"
+              placeholder="Username"
               className={input}
               disabled={pending}
             />
           </label>
 
           <label className="flex flex-col gap-2 text-sm">
-            <span className="text-white/70">Password</span>
+            <span className="text-bk-muted">Password</span>
             <span className="relative block">
               <input
                 name="password"
@@ -69,7 +69,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
                 type="button"
                 onClick={() => setShow((v) => !v)}
                 aria-label={show ? "Hide password" : "Show password"}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium uppercase tracking-[0.15em] text-white/50 transition-colors hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium uppercase tracking-[0.15em] text-bk-muted transition-colors hover:text-bk-ink"
               >
                 {show ? "Hide" : "Show"}
               </button>
@@ -77,7 +77,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
           </label>
 
           {state.error && (
-            <p role="alert" className="text-sm text-red-400">
+            <p role="alert" className="text-sm text-red-700">
               {state.error}
             </p>
           )}
@@ -91,7 +91,7 @@ export default function LoginForm({ configured }: { configured: boolean }) {
           <button
             type="submit"
             disabled={pending}
-            className="rounded-full bg-orange-400 px-6 py-3 text-sm font-semibold text-black transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
+            className="rounded-full bg-bk-accent px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100"
           >
             {pending ? "Signing in…" : "Sign in"}
           </button>

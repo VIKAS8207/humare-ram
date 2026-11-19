@@ -20,8 +20,8 @@ export default function DateTimeStep({
   const times = days.find((d) => d.date === date)?.times ?? [];
 
   return (
-    <div className="flex flex-col gap-10">
-      <header className="flex flex-col gap-2">
+    <div className="flex flex-col items-center gap-10 text-center">
+      <header className="flex flex-col items-center gap-2">
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Pick a date & time
         </h2>
@@ -30,11 +30,11 @@ export default function DateTimeStep({
         </p>
       </header>
 
-      <section className="flex flex-col gap-4" aria-label="Date">
+      <section className="flex flex-col items-center gap-4" aria-label="Date">
         <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
           Date
         </h3>
-        <div role="radiogroup" className="flex flex-wrap gap-3">
+        <div role="radiogroup" className="flex flex-wrap justify-center gap-3">
           {days.map((d) => {
             const p = dateParts(d.date);
             const selected = d.date === date;
@@ -66,12 +66,12 @@ export default function DateTimeStep({
         </div>
       </section>
 
-      <section className="flex flex-col gap-4" aria-label="Time">
+      <section className="flex flex-col items-center gap-4" aria-label="Time">
         <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
           Time
         </h3>
         {date ? (
-          <div role="radiogroup" className="flex flex-wrap gap-3">
+          <div role="radiogroup" className="flex flex-wrap justify-center gap-3">
             {times.map((t) => {
               const selected = t === time;
               return (

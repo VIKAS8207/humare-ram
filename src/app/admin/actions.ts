@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import {
   checkCredentials,
   clearFailures,
+  clearSignedOut,
   endSession,
+  markSignedOut,
   isConfigured,
   isLockedOut,
   recordFailure,
@@ -39,10 +41,12 @@ export async function login(
 
   await clearFailures();
   await startSession();
+  await clearSignedOut();
   redirect("/admin");
 }
 
 export async function logout() {
   await endSession();
+  await markSignedOut();
   redirect("/admin");
 }

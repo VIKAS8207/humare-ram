@@ -8,8 +8,7 @@ export function generateStaticParams() {
   return TICKET_ACTIONS.map((a) => ({ action: a.slug }));
 }
 
-// Placeholder page for each ticket action (Block, Hold, Reserve, Cancel Ticket).
-// The backend developer builds the real form / seat picker here.
+// Ticket pages: Booking (Hold / Reserve / Block) and Cancel (placeholder).
 export default async function TicketActionPage({
   params,
 }: {
@@ -19,14 +18,10 @@ export default async function TicketActionPage({
   const item = TICKET_ACTIONS.find((a) => a.slug === action);
   if (!item) notFound();
 
-  if (
-    item.slug === "block" ||
-    item.slug === "hold" ||
-    item.slug === "reserve"
-  ) {
+  if (item.slug === "booking") {
     return (
       <AdminGate>
-        <TicketFlow mode={item.slug} adminName={getAdminName()} />
+        <TicketFlow adminName={getAdminName()} />
       </AdminGate>
     );
   }
@@ -34,12 +29,12 @@ export default async function TicketActionPage({
   return (
     <AdminGate>
       <div className="flex max-w-2xl flex-col gap-6">
-        <p className="text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
+        <p className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
           Tickets
         </p>
         <h1 className="text-4xl font-semibold tracking-tight">{item.label}</h1>
-        <p className="text-white/60">{item.description}</p>
-        <p className="rounded-xl border border-amber-300/20 bg-amber-300/5 p-4 text-sm text-amber-100/80">
+        <p className="text-bk-muted">{item.description}</p>
+        <p className="rounded-xl border border-bk-gold/30 bg-bk-gold/10 p-4 text-sm text-bk-ink/80">
           This tool isn&apos;t connected to a backend yet.
         </p>
       </div>

@@ -5,8 +5,12 @@ import Link from "next/link";
 import Stepper from "@/components/booking/stepper";
 import DateTimeStep from "@/components/booking/steps/datetime-step";
 import SeatsStep from "@/components/booking/steps/seats-step";
-import SummaryPanel, { totalOf } from "@/components/booking/summary-panel";
-import { SEAT_CATEGORIES, VENUE, VENUES } from "@/components/booking/booking.data";
+import { BookingBar, totalOf } from "@/components/booking/summary-panel";
+import {
+  SEAT_CATEGORIES,
+  VENUE,
+  VENUES,
+} from "@/components/booking/booking.data";
 import type { Selection } from "@/components/booking/booking.types";
 import {
   categoryOfSeat,
@@ -23,6 +27,7 @@ import {
   type SeatRecord,
   type SeatRecordType,
 } from "@/lib/seat-store";
+import Select from "@/components/ui/select";
 import { PAYMENT_MODES } from "./payment-modes";
 
 type Mode = Exclude<SeatRecordType, never>;
@@ -45,7 +50,7 @@ const COPY: Record<
   block: {
     title: "Block seats",
     intro:
-      "Payment has been received. Choose the seats, then enter the customer's details to confirm.",
+      "Payment has been received. Enter the customer's details and how they paid, then confirm.",
     confirm: "Confirm & block",
     doneTitle: "Seats blocked",
     doneText:
@@ -65,12 +70,12 @@ const COPY: Record<
   reserve: {
     title: "Reserve seats",
     intro:
-      "For VVIPs. The seats are kept back for the guest and no payment is needed.",
+      "For VVIPs and guests. The seats are kept back for them. Enter how the payment was made.",
     confirm: "Reserve seats",
     doneTitle: "Seats reserved",
     doneText:
       "These seats are kept for the guest and no longer available to anyone else.",
-    amountLabel: "Value",
+    amountLabel: "Amount received",
   },
 };
 
@@ -92,18 +97,21 @@ function validate(mode: Mode, p: Person) {
     e.phone = "Enter a 10-digit mobile number";
   if (p.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(p.email.trim()))
     e.email = "Enter a valid email";
-  if (mode === "block" && !p.paymentMode)
+  if (mode !== "hold" && !p.paymentMode)
     e.paymentMode = "Choose how the payment was received";
   return e;
 }
 
-export default function TicketFlow({
-  mode,
-  adminName,
-}: {
-  mode: Mode;
-  adminName: string;
-}) {
+// What to do with the seats, chosen on the last step. Reserve and Block both
+// need the payment method; Hold does not (payment is still pending).
+const MODES: { id: Mode; label: string; hint: string }[] = [
+  { id: "hold", label: "Hold", hint: "Payment pending" },
+  { id: "reserve", label: "Reserve", hint: "Kept for a guest" },
+  { id: "block", label: "Block", hint: "Sold to a customer" },
+];
+
+export default function TicketFlow({ adminName }: { adminName: string }) {
+  const [mode, setMode] = useState<Mode>("hold");
   const copy = COPY[mode];
   const records = useSeatRecords();
 
@@ -176,8 +184,8 @@ export default function TicketFlow({
         email: person.email.trim() || undefined,
         note: person.note.trim() || undefined,
       },
-      amount: mode === "reserve" ? 0 : total,
-      paymentMode: mode === "block" ? person.paymentMode : undefined,
+      amount: total,
+      paymentMode: mode !== "hold" ? person.paymentMode : undefined,
       adminName,
     });
     setDone(record);
@@ -204,15 +212,18 @@ export default function TicketFlow({
   return (
     <div className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <p className="text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
+        <p className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
           Tickets
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight">{copy.title}</h1>
-        <p className="max-w-2xl text-white/60">{copy.intro}</p>
+        <h1 className="text-4xl font-semibold tracking-tight">Book seats</h1>
+        <p className="max-w-2xl text-bk-muted">
+          Choose the show and seats, then pick Hold, Reserve or Block and enter
+          the customer&apos;s details to finish.
+        </p>
       </header>
 
       {/* Same booking screens as the public site, on a light panel */}
-      <div className="rounded-3xl bg-bk-bg p-5 text-bk-ink md:p-10">
+      <div className="rounded-3xl border border-bk-line bg-bk-surface/60 p-5 text-bk-ink md:p-10">
         {done ? (
           <div className="mx-auto flex max-w-xl flex-col items-center gap-8 py-6 text-center">
             <span className="grid size-16 place-content-center rounded-full bg-bk-accent text-3xl text-bk-accent-ink">
@@ -272,7 +283,7 @@ export default function TicketFlow({
               onStepClick={(i) => setStep(i)}
             />
 
-            <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_22rem] lg:gap-14">
+            <div className="mt-10 pb-28 md:pb-20">
               <div className="min-w-0">
                 {step === 0 && selection.venueId && (
                   <DateTimeStep
@@ -415,41 +426,45 @@ export default function TicketFlow({
                         );
                       })}
 
-                      {mode === "block" && (
-                        <label className="flex flex-col gap-2 text-sm">
+                      <div className="flex flex-col gap-2 text-sm">
+                        <span className="text-bk-muted">Booking type</span>
+                        <Select
+                          value={mode}
+                          onChange={(v) => setMode(v as Mode)}
+                          options={MODES.map((m) => ({
+                            value: m.id,
+                            label: m.label,
+                            hint: m.hint,
+                          }))}
+                        />
+                      </div>
+
+                      {mode !== "hold" && (
+                        <div className="flex flex-col gap-2 text-sm">
                           <span className="text-bk-muted">
                             Payment received by
                           </span>
-                          <select
+                          <Select
                             value={person.paymentMode}
-                            onChange={(e) =>
-                              setPerson((p) => ({
-                                ...p,
-                                paymentMode: e.target.value,
-                              }))
+                            onChange={(v) =>
+                              setPerson((p) => ({ ...p, paymentMode: v }))
                             }
-                            aria-invalid={Boolean(
-                              showErrors && errors.paymentMode,
-                            )}
-                            className={`${input} ${showErrors && errors.paymentMode ? "border-red-600" : ""}`}
-                          >
-                            <option value="">Select…</option>
-                            {PAYMENT_MODES.map((m) => (
-                              <option key={m} value={m}>
-                                {m}
-                              </option>
-                            ))}
-                          </select>
+                            invalid={Boolean(showErrors && errors.paymentMode)}
+                            options={PAYMENT_MODES.map((m) => ({
+                              value: m,
+                              label: m,
+                            }))}
+                          />
                           {showErrors && errors.paymentMode && (
                             <span className="text-xs text-red-700">
                               {errors.paymentMode}
                             </span>
                           )}
-                        </label>
+                        </div>
                       )}
 
                       <label
-                        className={`flex flex-col gap-2 text-sm ${mode === "block" ? "" : "md:col-span-2"}`}
+                        className={`flex flex-col gap-2 text-sm ${mode !== "hold" ? "md:col-span-2" : ""}`}
                       >
                         <span className="text-bk-muted">
                           {mode === "reserve"
@@ -490,38 +505,37 @@ export default function TicketFlow({
                 )}
               </div>
 
-              <aside className="lg:sticky lg:top-8 lg:self-start">
-                <SummaryPanel selection={selection}>
-                  {mode !== "reserve" && (
-                    <p className="-mt-2 text-xs text-bk-muted">
-                      {mode === "block"
-                        ? "Amount received"
-                        : "Amount due when paid"}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-3">
-                    {step > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setStep((s) => Math.max(0, s - 1))}
-                        className="rounded-full border border-bk-line px-6 py-3 text-sm font-medium transition-colors hover:border-bk-ink"
-                      >
-                        Back
-                      </button>
-                    )}
+              {/* Booking summary pinned to the bottom, like the public site */}
+              <BookingBar selection={selection}>
+                {mode !== "reserve" && (
+                  <p className="mb-1 text-xs text-bk-muted">
+                    {mode === "block"
+                      ? "Amount received"
+                      : "Amount due when paid"}
+                  </p>
+                )}
+                <div className="flex items-center gap-3">
+                  {step > 0 && (
                     <button
                       type="button"
-                      onClick={() =>
-                        step < LAST ? setStep(step + 1) : confirm()
-                      }
-                      disabled={!stepValid}
-                      className="flex-1 rounded-full bg-bk-accent px-6 py-3 text-sm font-semibold text-bk-accent-ink transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+                      onClick={() => setStep((s) => Math.max(0, s - 1))}
+                      className="rounded-full border border-bk-line px-6 py-3 text-sm font-medium transition-colors hover:border-bk-ink"
                     >
-                      {step < LAST ? "Continue" : copy.confirm}
+                      Back
                     </button>
-                  </div>
-                </SummaryPanel>
-              </aside>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      step < LAST ? setStep(step + 1) : confirm()
+                    }
+                    disabled={!stepValid}
+                    className="flex-1 rounded-full bg-bk-accent px-6 py-3 text-sm font-semibold text-bk-accent-ink transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+                  >
+                    {step < LAST ? "Continue" : copy.confirm}
+                  </button>
+                </div>
+              </BookingBar>
             </div>
           </>
         )}

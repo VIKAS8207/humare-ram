@@ -10,51 +10,45 @@ type Props = {
 // Numbered progress bar. Completed steps are clickable to go back.
 export default function Stepper({ step, onStepClick, steps = STEPS }: Props) {
   return (
-    <ol
-      className="flex items-center gap-2 md:gap-4"
-      aria-label="Booking progress"
-    >
+    <ol className="flex items-start" aria-label="Booking progress">
       {steps.map((label, i) => {
         const done = i < step;
         const active = i === step;
         return (
-          <li key={label} className="flex flex-1 items-center gap-2 md:gap-4">
+          <li key={label} className="relative flex flex-1 justify-center">
+            {/* Line from this circle's centre to the next one's */}
+            {i < steps.length - 1 && (
+              <span
+                aria-hidden
+                className={`absolute left-1/2 top-4 h-px w-full ${done ? "bg-bk-accent/50" : "bg-bk-line"}`}
+              />
+            )}
             <button
               type="button"
               disabled={!done}
               onClick={() => onStepClick(i)}
               aria-current={active ? "step" : undefined}
-              className="group flex items-center gap-3 text-left disabled:cursor-default"
+              className="group relative flex flex-col items-center gap-2 text-center disabled:cursor-default"
             >
               <span
                 className={`grid size-8 shrink-0 place-content-center rounded-full border text-sm font-semibold transition-colors ${
                   active
                     ? "border-bk-accent bg-bk-accent text-bk-accent-ink"
                     : done
-                      ? "border-bk-accent text-bk-ink group-hover:bg-bk-accent/10"
-                      : "border-bk-line text-bk-muted"
+                      ? "border-bk-accent bg-bk-bg text-bk-ink group-hover:bg-bk-accent/10"
+                      : "border-bk-line bg-bk-bg text-bk-muted"
                 }`}
               >
                 {done ? "✓" : i + 1}
               </span>
               <span
-                className={`hidden text-xs font-medium uppercase tracking-[0.2em] md:block ${
-                  active
-                    ? "text-bk-ink"
-                    : done
-                      ? "text-bk-ink"
-                      : "text-bk-muted"
+                className={`text-[0.65rem] font-medium uppercase tracking-[0.15em] md:text-xs md:tracking-[0.2em] ${
+                  active || done ? "text-bk-ink" : "text-bk-muted"
                 }`}
               >
                 {label}
               </span>
             </button>
-            {i < steps.length - 1 && (
-              <span
-                aria-hidden
-                className={`h-px flex-1 ${done ? "bg-bk-gold/10" : "bg-bk-line"}`}
-              />
-            )}
           </li>
         );
       })}
