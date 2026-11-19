@@ -24,9 +24,9 @@ import {
   SEATS,
   SEAT_BY_ID,
   SEAT_PITCH,
-  SEAT_RADIUS,
   STAGE,
 } from "../seat-layout";
+import { SeatIcon, SeatSymbol } from "../seat-icon";
 
 type Props = {
   showKey: string;
@@ -44,6 +44,9 @@ type Props = {
 
 // Selected seats: plain green, no border
 const SELECTED_COLOR = "#16a34a";
+
+// Seat icon size on the plan (plan units); seats are 16.8 apart
+const SEAT_SIZE = 15;
 
 const ZOOMS = [1, 1.5, 2, 3, 4];
 
@@ -333,9 +336,23 @@ export default function SeatsStep({
       hi++;
     const run = rowSeats.slice(lo, hi + 1);
     if (run.length < quantity) {
-      setNotice(
-        `${quantity} seats together are not free here. Pick another spot.`,
+      // Not enough seats side by side: skip the taken seats (and aisles) and
+      // take the next free seats in this row instead, starting at the tapped one
+      const free = rowSeats.filter((s) => !isTaken(s.id));
+      if (free.length < quantity) {
+        setNotice(
+          `Only ${free.length} seat${free.length === 1 ? " is" : "s are"} free in row ${clicked.row}. Pick another row.`,
+        );
+        return;
+      }
+      const from = Math.min(
+        free.findIndex((s) => s.id === id),
+        free.length - quantity,
       );
+      setNotice(
+        "Seats were not free side by side, so we took the next free ones.",
+      );
+      onSeats(free.slice(from, from + quantity).map((s) => s.id));
       return;
     }
     // Start at the tapped seat and go right; slide left if there is no room
@@ -458,38 +475,27 @@ export default function SeatsStep({
       >
         {SEAT_CATEGORIES.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
-            <span
-              aria-hidden
-              className="size-3.5 rounded-full"
-              style={{ background: c.color }}
-            />
+            <SeatIcon color={c.color} />
             {c.name} <span className="text-bk-muted">{inr(c.price)}</span>
           </li>
         ))}
         <li className="flex items-center gap-2 text-bk-muted">
-          <span aria-hidden className="size-3.5 rounded-full bg-bk-line" />
+          <SeatIcon color="rgba(43,29,18,0.18)" />
           Sold
         </li>
         <li className="flex items-center gap-2 text-bk-muted">
-          <span
-            aria-hidden
-            className="size-3.5 rounded-full border border-bk-muted/60"
-          />
+          <SeatIcon color="rgba(43,29,18,0.3)" />
           Book on BookMyShow
         </li>
         <li className="flex items-center gap-2">
-          <span
-            aria-hidden
-            className="size-3.5 rounded-full"
-            style={{ background: SELECTED_COLOR }}
-          />
+          <SeatIcon color={SELECTED_COLOR} />
           Selected
         </li>
       </ul>
 
       <p className="text-sm text-bk-muted">
         Tap a seat and all your seats are selected together, side by side. Tap
-        another spot to move them. Grey outlined seats are sold on BookMyShow.
+        another spot to move them. Faded seats are sold on BookMyShow.
       </p>
 
       {/* Seat plan */}
@@ -523,44 +529,37 @@ export default function SeatsStep({
             ))}
 
             {/* Seats */}
+            <SeatSymbol />
             {SEATS.map((s) => {
-              // Not sold on this site: hollow seat that leads to BookMyShow
+              const half = SEAT_SIZE / 2;
+              const spot = {
+                x: s.x - half,
+                y: s.y - half,
+                width: SEAT_SIZE,
+                height: SEAT_SIZE,
+              };
+              // Not sold on this site: faint seat that leads to BookMyShow
               if (!s.bookable) {
                 return (
-                  <circle
+                  <g
                     key={s.id}
-                    cx={s.x}
-                    cy={s.y}
-                    r={SEAT_RADIUS}
-                    fill="rgba(43,29,18,0.04)"
-                    stroke="rgba(43,29,18,0.3)"
-                    strokeWidth={0.9}
                     role="link"
                     aria-label={`Row ${s.row} seat ${s.n}, book on BookMyShow`}
-                    className="cursor-pointer hover:fill-[rgba(43,29,18,0.16)]"
+                    className="cursor-pointer opacity-100 hover:opacity-60"
                     onClick={() => !dragMoved.current && goToBookMyShow()}
                   >
+                    <rect {...spot} fill="transparent" />
+                    <use href="#hr-seat" {...spot} fill="rgba(43,29,18,0.3)" />
                     <title>{`${s.row} ${s.n} · Book on BookMyShow`}</title>
-                  </circle>
+                  </g>
                 );
               }
               const taken = isTaken(s.id);
               const isSel = selected.has(s.id);
               const cat = categoryOfSeat(s.id);
               return (
-                <circle
+                <g
                   key={s.id}
-                  cx={s.x}
-                  cy={s.y}
-                  r={SEAT_RADIUS}
-                  fill={
-                    taken
-                      ? "rgba(43,29,18,0.14)"
-                      : isSel
-                        ? SELECTED_COLOR
-                        : cat.color
-                  }
-                  fillOpacity={taken || isSel ? 1 : 0.85}
                   role="checkbox"
                   aria-checked={isSel}
                   aria-disabled={taken}
@@ -568,12 +567,24 @@ export default function SeatsStep({
                   className={
                     taken
                       ? "cursor-not-allowed"
-                      : "cursor-pointer hover:opacity-100"
+                      : "cursor-pointer hover:opacity-75"
                   }
                   onClick={() => !dragMoved.current && toggle(s.id)}
                 >
+                  <rect {...spot} fill="transparent" />
+                  <use
+                    href="#hr-seat"
+                    {...spot}
+                    fill={
+                      taken
+                        ? "rgba(43,29,18,0.18)"
+                        : isSel
+                          ? SELECTED_COLOR
+                          : cat.color
+                    }
+                  />
                   <title>{`${s.id} · ${cat.name} · ${inr(cat.price)}${taken ? " · Sold" : ""}`}</title>
-                </circle>
+                </g>
               );
             })}
 

@@ -11,7 +11,7 @@ import {
 } from "@/lib/preload";
 import { createLiquidReveal } from "@/lib/liquid-reveal";
 import { LOADER_DONE_EVENT, markLoaderDone } from "@/lib/events";
-import { shouldSkipLoader } from "@/lib/skip-loader";
+import { MOBILE_QUERY, shouldSkipLoader } from "@/lib/skip-loader";
 
 // Counter follows real image loading (min 1.5s so it never flashes).
 // Exit: the background melts away from three spots like liquid (WebGL).
@@ -23,7 +23,8 @@ export default function Loader() {
   useGSAP(
     () => {
       // Reloaded while scrolled down: no loader, just unmount (CSS already hides it)
-      if (shouldSkipLoader()) {
+      // Phones use <MobileLoader /> instead
+      if (shouldSkipLoader() || window.matchMedia(MOBILE_QUERY).matches) {
         setDone(true);
         return;
       }
@@ -156,7 +157,7 @@ export default function Loader() {
     <div
       ref={root}
       data-loader
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black text-white will-change-transform"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black text-white will-change-transform max-md:hidden"
     >
       <div className="loader-bg absolute inset-0">
         <Image

@@ -9,6 +9,9 @@ export const SKIP_SCROLL_THRESHOLD = 50;
 
 export const SKIP_LOADER_SCRIPT = `(function(){try{var n=performance.getEntriesByType("navigation")[0];var t=n&&n.type;var y=+sessionStorage.getItem("${SCROLL_KEY}")||0;if((t==="reload"||t==="back_forward")&&y>${SKIP_SCROLL_THRESHOLD})document.documentElement.classList.add("${SKIP_LOADER_CLASS}")}catch(e){}})();`;
 
+// Phones get their own loader (video). Same breakpoint as Tailwind `md`.
+export const MOBILE_QUERY = "(max-width: 767px)";
+
 export const shouldSkipLoader = () =>
   typeof document !== "undefined" &&
   document.documentElement.classList.contains(SKIP_LOADER_CLASS);

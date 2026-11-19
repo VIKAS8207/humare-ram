@@ -35,6 +35,11 @@ const PITCH = 8.4; // seat spacing in the PDF
 const R = 6.4; // seat radius (plan units)
 const LABEL_GAP = 9; // PDF points between a row letter and its first seat
 
+// Extra space (PDF points) pushed in front of a row, e.g. between row A and
+// the VVIP sofa row. Everything after it (and the stage) moves down too.
+const GAP_BEFORE: Record<string, number> = { VVIP: 7 };
+const VVIP_GAP = GAP_BEFORE.VVIP;
+
 const px = (x: number) => (x - OFFSET_X) * SCALE;
 const py = (y: number) => (y - OFFSET_Y) * SCALE;
 
@@ -54,7 +59,7 @@ for (const row of PLAN_ROWS) {
         row: row.row,
         n,
         x: px(cx),
-        y: py(row.y),
+        y: py(row.y + (GAP_BEFORE[row.row] ?? 0)),
         tier: row.tier,
         bookable,
       });
@@ -62,8 +67,9 @@ for (const row of PLAN_ROWS) {
     left = Math.min(left, x);
     right = Math.max(right, x + (count - 1) * PITCH);
   }
-  ROW_LABELS.push({ row: row.row, x: px(left - LABEL_GAP), y: py(row.y) });
-  ROW_LABELS.push({ row: row.row, x: px(right + LABEL_GAP), y: py(row.y) });
+  const labelY = py(row.y + (GAP_BEFORE[row.row] ?? 0));
+  ROW_LABELS.push({ row: row.row, x: px(left - LABEL_GAP), y: labelY });
+  ROW_LABELS.push({ row: row.row, x: px(right + LABEL_GAP), y: labelY });
 }
 
 /** Bookable rows from the stage outwards — used to sort seats for display. */
@@ -83,7 +89,7 @@ export const ROW_ORDER = [
 export const PLAN_WIDTH = px(530);
 export const STAGE = {
   x: px(PLAN_STAGE.x),
-  y: py(PLAN_STAGE.y),
+  y: py(PLAN_STAGE.y + VVIP_GAP),
   width: PLAN_STAGE.width * SCALE,
   height: PLAN_STAGE.height * SCALE,
 };

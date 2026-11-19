@@ -1,4 +1,4 @@
-import Loader from "@/components/loader";
+import Loader, { MobileLoader } from "@/components/loader";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import HeroSection from "@/components/sections/hero";
@@ -14,6 +14,7 @@ export default function Home() {
   return (
     <>
       <Loader />
+      <MobileLoader />
       <Navbar />
       <main>
         <HeroSection />
