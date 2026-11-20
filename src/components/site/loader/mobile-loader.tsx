@@ -6,8 +6,8 @@ import { CRITICAL_IMAGES, HERO_TOP, preloadImages } from "@/lib/preload";
 import { LOADER_DONE_EVENT, markLoaderDone } from "@/lib/events";
 import { MOBILE_QUERY, shouldSkipLoader } from "@/lib/skip-loader";
 
-const POSTER = "/images/loader/mobile/mobil-loding-image.png";
-const VIDEO = "/images/loader/mobile/mobile-loding-video-2.mp4";
+const POSTER = "/images/loader/mobile/mobile-loding-image-3.png";
+const VIDEO = "/images/loader/mobile/mobile-loding-video-3.mp4";
 
 const MIN_WAIT = 1500; // loading screen is never shorter than this (ms)
 const MAX_WAIT = 10000; // start the video anyway after this (slow network)

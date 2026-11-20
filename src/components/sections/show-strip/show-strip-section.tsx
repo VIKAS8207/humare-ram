@@ -1,7 +1,10 @@
 import { RevealSection } from "@/components/ui";
 import { SHOWS, VENUE } from "@/components/booking/booking.data";
 import { formatTime } from "@/components/booking/booking.utils";
-import { EVENT_DATE } from "@/components/sections/event-details/event-details.data";
+import {
+  EVENT_DATE,
+  EVENT_VENUE,
+} from "@/components/sections/event-details/event-details.data";
 
 // Slim horizontal band right under the hero: where, and when. Golden letters.
 // Everything comes from the booking data, so it never disagrees with the
@@ -10,15 +13,13 @@ const times = [...new Set((SHOWS[VENUE.id] ?? []).flatMap((d) => d.times))]
   .map(formatTime)
   .join("  &  ");
 
+// "Raipur (CG)" -> "Raipur" with "Chhattisgarh" on the line below
+const city = VENUE.city.replace(/\s*\(.*\)$/, "");
+
 const ITEMS = [
   { label: "Venue", value: VENUE.name, span: "col-span-2 md:col-span-1" },
-  { label: "Location", value: VENUE.city, span: "" },
-  {
-    label: "Shows",
-    value: EVENT_DATE.value,
-    sub: times,
-    span: "",
-  },
+  { label: "Location", value: city, sub: EVENT_VENUE.state, span: "" },
+  { label: "Shows", value: EVENT_DATE.value, sub: times, span: "" },
 ] as const;
 
 const GOLD_TEXT =

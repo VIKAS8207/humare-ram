@@ -18,6 +18,8 @@ export const EVENT_VENUE = {
   label: "Venue",
   value: "Pandit Dindayal Upadhyay Auditorium",
   note: "Raipur (CG)",
+  // Full state name, shown under the city in the show strip
+  state: "Chhattisgarh",
   // Opens Google Maps for directions
   mapHref:
     "https://www.google.com/maps/search/?api=1&query=Pandit+Dindayal+Upadhyay+Auditorium+Raipur",
