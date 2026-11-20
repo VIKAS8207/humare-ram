@@ -223,12 +223,22 @@ export default function SeatsStep({
   const scroller = useRef<HTMLDivElement>(null);
   const zoomRef = useRef(1);
   const anchor = useRef({ x: 0.5, y: 0.5 });
+  // Pinch: the plan point under the fingers stays under the fingers
+  const focus = useRef<{
+    fx: number;
+    fy: number;
+    sx: number;
+    sy: number;
+  } | null>(null);
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ dist: number; zoom: number } | null>(null);
   const dragMoved = useRef(false);
   // Which picked seat the next single tap replaces (counts down, then wraps)
   const swapSlot = useRef(0);
 
   // Zoom around the middle of what is currently visible
   const changeZoom = useCallback((next: number) => {
+    focus.current = null;
     const el = scroller.current;
     if (el && el.scrollWidth > 0) {
       anchor.current = {
@@ -241,8 +251,12 @@ export default function SeatsStep({
   }, []);
   const zoomStep = useCallback(
     (dir: 1 | -1) => {
-      const i = ZOOMS.indexOf(zoomRef.current);
-      changeZoom(ZOOMS[Math.min(Math.max(i + dir, 0), ZOOMS.length - 1)]);
+      const z = zoomRef.current;
+      const next =
+        dir === 1
+          ? (ZOOMS.find((v) => v > z + 0.01) ?? ZOOMS[ZOOMS.length - 1])
+          : ([...ZOOMS].reverse().find((v) => v < z - 0.01) ?? ZOOMS[0]);
+      changeZoom(next);
     },
     [changeZoom],
   );
@@ -251,9 +265,78 @@ export default function SeatsStep({
   useLayoutEffect(() => {
     const el = scroller.current;
     if (!el) return;
-    el.scrollLeft = anchor.current.x * el.scrollWidth - el.clientWidth / 2;
-    el.scrollTop = anchor.current.y * el.scrollHeight - el.clientHeight / 2;
+    const f = focus.current;
+    if (f) {
+      el.scrollLeft = f.fx * el.scrollWidth - f.sx;
+      el.scrollTop = f.fy * el.scrollHeight - f.sy;
+    } else {
+      el.scrollLeft = anchor.current.x * el.scrollWidth - el.clientWidth / 2;
+      el.scrollTop = anchor.current.y * el.scrollHeight - el.clientHeight / 2;
+    }
   }, [zoom]);
+
+  // Two-finger pinch zooms ONLY the seat plan (the page itself never zooms:
+  // the plan box has touch-action pan-x pan-y, which turns off page pinch-zoom)
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    const mid = () => {
+      const [a, b] = [...pointers.current.values()];
+      return {
+        x: (a.x + b.x) / 2,
+        y: (a.y + b.y) / 2,
+        d: Math.hypot(a.x - b.x, a.y - b.y),
+      };
+    };
+    const down = (e: PointerEvent) => {
+      if (e.pointerType !== "touch") return;
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.current.size === 2) {
+        const m = mid();
+        const r = el.getBoundingClientRect();
+        pinch.current = { dist: m.d || 1, zoom: zoomRef.current };
+        focus.current = {
+          fx: (el.scrollLeft + m.x - r.left) / el.scrollWidth,
+          fy: (el.scrollTop + m.y - r.top) / el.scrollHeight,
+          sx: m.x - r.left,
+          sy: m.y - r.top,
+        };
+        dragMoved.current = true; // the pinch must not select a seat
+      }
+    };
+    const move = (e: PointerEvent) => {
+      if (!pointers.current.has(e.pointerId)) return;
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (!pinch.current || pointers.current.size !== 2 || !focus.current)
+        return;
+      const m = mid();
+      const r = el.getBoundingClientRect();
+      focus.current.sx = m.x - r.left;
+      focus.current.sy = m.y - r.top;
+      const next = Math.min(
+        ZOOMS[ZOOMS.length - 1],
+        Math.max(1, (pinch.current.zoom * m.d) / pinch.current.dist),
+      );
+      zoomRef.current = next;
+      setZoom(next);
+    };
+    const up = (e: PointerEvent) => {
+      pointers.current.delete(e.pointerId);
+      if (pointers.current.size < 2) pinch.current = null;
+      if (pointers.current.size === 0)
+        setTimeout(() => (dragMoved.current = false), 300); // after the click event
+    };
+    el.addEventListener("pointerdown", down);
+    el.addEventListener("pointermove", move);
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+    return () => {
+      el.removeEventListener("pointerdown", down);
+      el.removeEventListener("pointermove", move);
+      el.removeEventListener("pointerup", up);
+      el.removeEventListener("pointercancel", up);
+    };
+  }, []);
 
   // Ctrl + wheel / trackpad pinch zooms the plan instead of the page
   useEffect(() => {
@@ -442,41 +525,6 @@ export default function SeatsStep({
             Clear
           </button>
         )}
-
-        {/* Zoom: always visible next to the other controls */}
-        <div
-          className="ml-auto flex items-center gap-1"
-          role="group"
-          aria-label="Zoom"
-        >
-          <button
-            type="button"
-            aria-label="Zoom out"
-            disabled={zoom <= ZOOMS[0]}
-            onClick={() => zoomStep(-1)}
-            className="grid size-10 place-content-center rounded-full border border-line text-xl transition-colors hover:border-accent disabled:opacity-30 disabled:hover:border-line"
-          >
-            −
-          </button>
-          <button
-            type="button"
-            aria-label="Reset zoom"
-            disabled={zoom === 1}
-            onClick={() => changeZoom(1)}
-            className="w-14 text-center text-xs font-semibold tabular-nums text-ink-muted transition-colors hover:text-ink disabled:hover:text-ink-muted"
-          >
-            {zoom === 1 ? "Fit" : `${Math.round(zoom * 100)}%`}
-          </button>
-          <button
-            type="button"
-            aria-label="Zoom in"
-            disabled={zoom >= ZOOMS[ZOOMS.length - 1]}
-            onClick={() => zoomStep(1)}
-            className="grid size-10 place-content-center rounded-full border border-line text-xl transition-colors hover:border-accent disabled:opacity-30 disabled:hover:border-line"
-          >
-            +
-          </button>
-        </div>
       </div>
 
       {notice && (
@@ -512,15 +560,51 @@ export default function SeatsStep({
 
       <p className="text-sm text-ink-muted">
         Tap a seat and all your seats are selected together, side by side. Tap
-        another seat to move one seat there. Faded seats are sold on BookMyShow.
+        another seat to move one seat there. Pinch the map or use + / − to zoom.
+        Faded seats are sold on BookMyShow.
       </p>
 
       {/* Seat plan */}
       <div className="relative rounded-2xl border border-line bg-paper-raised">
+        {/* Zoom controls live inside the map so it is obvious they zoom it */}
+        <div
+          role="group"
+          aria-label="Zoom the seat plan"
+          className="absolute right-2 top-2 z-10 flex items-center gap-0.5 rounded-full border border-line bg-paper-raised/90 p-1 shadow-sm backdrop-blur md:right-3 md:top-3"
+        >
+          <button
+            type="button"
+            aria-label="Zoom out"
+            disabled={zoom <= ZOOMS[0]}
+            onClick={() => zoomStep(-1)}
+            className="grid size-8 place-content-center rounded-full text-lg leading-none transition-colors hover:bg-ink/5 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            −
+          </button>
+          <button
+            type="button"
+            aria-label="Fit the whole plan"
+            disabled={zoom === 1}
+            onClick={() => changeZoom(1)}
+            className="min-w-11 px-1 text-center text-xs font-semibold tabular-nums text-ink-muted transition-colors hover:text-ink disabled:hover:text-ink-muted"
+          >
+            {zoom === 1 ? "Fit" : `${Math.round(zoom * 100)}%`}
+          </button>
+          <button
+            type="button"
+            aria-label="Zoom in"
+            disabled={zoom >= ZOOMS[ZOOMS.length - 1]}
+            onClick={() => zoomStep(1)}
+            className="grid size-8 place-content-center rounded-full text-lg leading-none transition-colors hover:bg-ink/5 disabled:opacity-30 disabled:hover:bg-transparent"
+          >
+            +
+          </button>
+        </div>
         {/* Whole plan visible at 1x; scrolls inside its box once zoomed in */}
         <div
           ref={scroller}
           onPointerDown={onPanStart}
+          style={{ touchAction: "pan-x pan-y" }}
           className={`overflow-auto p-2 md:p-4 ${zoom > 1 ? "max-h-[70vh] cursor-grab active:cursor-grabbing" : ""}`}
         >
           <svg
