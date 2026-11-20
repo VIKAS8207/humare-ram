@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { ADMIN_OPEN_SIGN_IN } from "@/config/admin";
 import Image from "next/image";
 import { IMAGES } from "@/config/images";
 import { login, type LoginState } from "@/app/admin/actions";
@@ -31,7 +32,11 @@ export default function LoginForm({ configured }: { configured: boolean }) {
             <h1 className="text-2xl font-semibold tracking-tight">
               Admin sign in
             </h1>
-            <p className="text-sm text-bk-muted">Authorised staff only.</p>
+            <p className="text-sm text-bk-muted">
+              {ADMIN_OPEN_SIGN_IN
+                ? "Click Sign in to open the admin."
+                : "Authorised staff only."}
+            </p>
           </div>
         </div>
 
@@ -39,49 +44,53 @@ export default function LoginForm({ configured }: { configured: boolean }) {
           action={action}
           className="flex flex-col gap-5 rounded-2xl border border-bk-line bg-bk-surface p-6"
         >
-          <label className="flex flex-col gap-2 text-sm">
-            <span className="text-bk-muted">Username</span>
-            <input
-              name="email"
-              type="text"
-              required
-              autoComplete="username"
-              autoFocus
-              placeholder="Username"
-              className={input}
-              disabled={pending}
-            />
-          </label>
+          {!ADMIN_OPEN_SIGN_IN && (
+            <>
+              <label className="flex flex-col gap-2 text-sm">
+                <span className="text-bk-muted">Username</span>
+                <input
+                  name="email"
+                  type="text"
+                  required
+                  autoComplete="username"
+                  autoFocus
+                  placeholder="Username"
+                  className={input}
+                  disabled={pending}
+                />
+              </label>
 
-          <label className="flex flex-col gap-2 text-sm">
-            <span className="text-bk-muted">Password</span>
-            <span className="relative block">
-              <input
-                name="password"
-                type={show ? "text" : "password"}
-                required
-                autoComplete="current-password"
-                placeholder="••••••••"
-                className={`${input} pr-16`}
-                disabled={pending}
-              />
-              <button
-                type="button"
-                onClick={() => setShow((v) => !v)}
-                aria-label={show ? "Hide password" : "Show password"}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium uppercase tracking-[0.15em] text-bk-muted transition-colors hover:text-bk-ink"
-              >
-                {show ? "Hide" : "Show"}
-              </button>
-            </span>
-          </label>
+              <label className="flex flex-col gap-2 text-sm">
+                <span className="text-bk-muted">Password</span>
+                <span className="relative block">
+                  <input
+                    name="password"
+                    type={show ? "text" : "password"}
+                    required
+                    autoComplete="current-password"
+                    placeholder="••••••••"
+                    className={`${input} pr-16`}
+                    disabled={pending}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShow((v) => !v)}
+                    aria-label={show ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium uppercase tracking-[0.15em] text-bk-muted transition-colors hover:text-bk-ink"
+                  >
+                    {show ? "Hide" : "Show"}
+                  </button>
+                </span>
+              </label>
+            </>
+          )}
 
           {state.error && (
             <p role="alert" className="text-sm text-red-700">
               {state.error}
             </p>
           )}
-          {!configured && !state.error && (
+          {!ADMIN_OPEN_SIGN_IN && !configured && !state.error && (
             <p className="rounded-lg border border-amber-300/20 bg-amber-300/5 p-3 text-xs text-amber-100/80">
               Sign-in isn&apos;t configured on this server yet (missing admin
               environment variables).

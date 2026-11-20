@@ -1,4 +1,4 @@
-// How an offline payment was received (shown when blocking seats).
+// How an offline payment was received (shown when booking seats).
 export const PAYMENT_MODES = [
   "Cash",
   "UPI",

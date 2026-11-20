@@ -3,6 +3,7 @@ import { VENUES } from "./booking.data";
 import type { Attendee, Confirmation, Selection } from "./booking.types";
 import { dateParts, formatTime, inr, sortSeats } from "./booking.utils";
 import { totalOf } from "./summary-panel";
+import TicketCard from "@/components/ticket/ticket-card";
 
 type Props = {
   selection: Selection;
@@ -16,6 +17,15 @@ export default function ConfirmationView({
   confirmation,
 }: Props) {
   const venue = VENUES.find((v) => v.id === selection.venueId);
+
+  const homeLink = (
+    <Link
+      href="/"
+      className="rounded-full bg-bk-ink px-7 py-3 text-sm font-semibold text-bk-bg transition-transform hover:scale-105"
+    >
+      Back to home
+    </Link>
+  );
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-8 py-10 text-center">
@@ -58,12 +68,25 @@ export default function ConfirmationView({
         ))}
       </dl>
 
-      <Link
-        href="/"
-        className="rounded-full bg-bk-ink px-8 py-3 font-medium text-bk-bg transition-transform hover:scale-105"
-      >
-        Back to home
-      </Link>
+      {/* Ticket with QR code + download, on the same row as Back to home */}
+      {selection.date && selection.time ? (
+        <TicketCard
+          ticket={{
+            reference: confirmation.reference,
+            name: attendee.name,
+            venue: venue ? `${venue.name}, ${venue.city}` : "",
+            dateLong: dateParts(selection.date).long,
+            time: formatTime(selection.time),
+            seats: sortSeats(selection.seats),
+            amount: inr(totalOf(selection.seats)),
+            status: "Confirmed",
+          }}
+        >
+          {homeLink}
+        </TicketCard>
+      ) : (
+        homeLink
+      )}
     </div>
   );
 }

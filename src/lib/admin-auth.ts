@@ -2,6 +2,7 @@ import "server-only";
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { connection } from "next/server";
+import { ADMIN_OPEN_SIGN_IN } from "@/config/admin";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Admin authentication (server only).
@@ -21,6 +22,16 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_MS = 15 * 60 * 1000;
 
 const config = () => {
+  // Open sign-in: no credentials, so the session is signed with the real secret
+  // if there is one, otherwise a fixed fallback (see config/admin.ts).
+  if (ADMIN_OPEN_SIGN_IN) {
+    const s = process.env.ADMIN_SESSION_SECRET;
+    return {
+      email: "",
+      password: "",
+      secret: s && s.length >= 32 ? s : "open-sign-in-fallback-secret-key-0001",
+    };
+  }
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   const secret = process.env.ADMIN_SESSION_SECRET;

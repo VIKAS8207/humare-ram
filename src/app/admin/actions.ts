@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { ADMIN_OPEN_SIGN_IN } from "@/config/admin";
 import {
   checkCredentials,
   clearFailures,
@@ -19,6 +20,13 @@ export async function login(
   _prev: LoginState,
   formData: FormData,
 ): Promise<LoginState> {
+  // Open sign-in: just clicking "Sign in" is enough (see config/admin.ts)
+  if (ADMIN_OPEN_SIGN_IN) {
+    await startSession();
+    await clearSignedOut();
+    redirect("/admin");
+  }
+
   if (!isConfigured()) {
     return { error: "Admin sign-in is not set up on this server yet." };
   }

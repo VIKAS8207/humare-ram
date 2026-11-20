@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Stepper from "@/components/booking/stepper";
 import DateTimeStep from "@/components/booking/steps/datetime-step";
 import SeatsStep from "@/components/booking/steps/seats-step";
@@ -28,6 +29,8 @@ import {
   type SeatRecordType,
 } from "@/lib/seat-store";
 import Select from "@/components/ui/select";
+import TicketCard from "@/components/ticket/ticket-card";
+import { recordTicket } from "@/components/ticket/record-ticket";
 import { PAYMENT_MODES } from "./payment-modes";
 
 type Mode = Exclude<SeatRecordType, never>;
@@ -48,11 +51,11 @@ const COPY: Record<
   }
 > = {
   block: {
-    title: "Block seats",
+    title: "Book seats",
     intro:
       "Payment has been received. Enter the customer's details and how they paid, then confirm.",
-    confirm: "Confirm & block",
-    doneTitle: "Seats blocked",
+    confirm: "Confirm & book",
+    doneTitle: "Seats booked",
     doneText:
       "These seats are now sold and no longer available to anyone else.",
     amountLabel: "Amount received",
@@ -60,17 +63,17 @@ const COPY: Record<
   hold: {
     title: "Hold seats",
     intro:
-      "Payment is not received yet. The seats are held and listed on the Dashboard. Move them to Block once the money arrives.",
+      "Payment is not received yet. The seats are held and listed on the Dashboard. Move them to Booked once the money arrives.",
     confirm: "Hold seats",
     doneTitle: "Seats on hold",
     doneText:
-      "Find them on the Dashboard under Held seats. Move them to Block when payment is received.",
+      "Find them on the Dashboard under Held seats. Move them to Booked when payment is received.",
     amountLabel: "Amount due",
   },
   reserve: {
     title: "Reserve seats",
     intro:
-      "For VVIPs and guests. The seats are kept back for them. Enter how the payment was made.",
+      "For VVIPs and guests. The seats are kept back for them. Choose a payment method only if they paid.",
     confirm: "Reserve seats",
     doneTitle: "Seats reserved",
     doneText:
@@ -97,17 +100,18 @@ function validate(mode: Mode, p: Person) {
     e.phone = "Enter a 10-digit mobile number";
   if (p.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(p.email.trim()))
     e.email = "Enter a valid email";
-  if (mode !== "hold" && !p.paymentMode)
+  // Booked needs the payment method; for Reserve it is optional
+  if (mode === "block" && !p.paymentMode)
     e.paymentMode = "Choose how the payment was received";
   return e;
 }
 
-// What to do with the seats, chosen on the last step. Reserve and Block both
+// What to do with the seats, chosen on the last step. Reserve and Booked both
 // need the payment method; Hold does not (payment is still pending).
 const MODES: { id: Mode; label: string; hint: string }[] = [
   { id: "hold", label: "Hold", hint: "Payment pending" },
   { id: "reserve", label: "Reserve", hint: "Kept for a guest" },
-  { id: "block", label: "Block", hint: "Sold to a customer" },
+  { id: "block", label: "Booked", hint: "Sold to a customer" },
 ];
 
 export default function TicketFlow({ adminName }: { adminName: string }) {
@@ -132,6 +136,28 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
   });
   const [showErrors, setShowErrors] = useState(false);
   const [done, setDone] = useState<SeatRecord | null>(null);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const router = useRouter();
+
+  // Anything picked or typed that would be lost by leaving
+  const dirty =
+    !done &&
+    Boolean(
+      selection.date ||
+      selection.seats.length ||
+      person.name ||
+      person.phone ||
+      person.email ||
+      person.note,
+    );
+
+  // Closing / reloading the tab with an unfinished booking: browser warning
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
 
   const extraTaken = useMemo(
     () =>
@@ -184,8 +210,10 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
         email: person.email.trim() || undefined,
         note: person.note.trim() || undefined,
       },
-      amount: total,
-      paymentMode: mode !== "hold" ? person.paymentMode : undefined,
+      // Reserve without a payment method = complimentary seats (no amount)
+      amount: mode === "reserve" && !person.paymentMode ? 0 : total,
+      paymentMode:
+        mode !== "hold" && person.paymentMode ? person.paymentMode : undefined,
       adminName,
     });
     setDone(record);
@@ -203,25 +231,39 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
     setPerson({ name: "", phone: "", email: "", note: "", paymentMode: "" });
     setShowErrors(false);
     setDone(null);
+    setMode("hold");
+    setLeaveOpen(false);
   };
 
   const venue = VENUES.find(
     (v) => v.id === (done?.venueId ?? selection.venueId),
   );
 
+  const doneButtons = (
+    <>
+      <button
+        type="button"
+        onClick={reset}
+        className="rounded-full bg-bk-ink px-7 py-3 text-sm font-semibold text-bk-bg transition-transform hover:scale-105"
+      >
+        {mode === "block"
+          ? "Book more seats"
+          : mode === "hold"
+            ? "Hold more seats"
+            : "Reserve more seats"}
+      </button>
+      <Link
+        href="/admin"
+        onClick={reset}
+        className="rounded-full border border-bk-line px-7 py-3 text-sm font-semibold transition-colors hover:border-bk-ink"
+      >
+        Go to dashboard
+      </Link>
+    </>
+  );
+
   return (
     <div className="flex flex-col gap-8">
-      <header className="flex flex-col gap-2">
-        <p className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
-          Tickets
-        </p>
-        <h1 className="text-4xl font-semibold tracking-tight">Book seats</h1>
-        <p className="max-w-2xl text-bk-muted">
-          Choose the show and seats, then pick Hold, Reserve or Block and enter
-          the customer&apos;s details to finish.
-        </p>
-      </header>
-
       {/* Same booking screens as the public site, on a light panel */}
       <div className="rounded-3xl border border-bk-line bg-bk-surface/60 p-5 text-bk-ink md:p-10">
         {done ? (
@@ -255,35 +297,33 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
                 </div>
               ))}
             </dl>
-            <div className="flex flex-wrap justify-center gap-3">
-              <button
-                type="button"
-                onClick={reset}
-                className="rounded-full bg-bk-ink px-7 py-3 text-sm font-semibold text-bk-bg transition-transform hover:scale-105"
+            {/* Ticket + QR + download for booked seats (buttons share one row); none for a hold */}
+            {done.type !== "hold" ? (
+              <TicketCard
+                ticket={recordTicket(
+                  done,
+                  venue ? `${venue.name}, ${venue.city}` : "",
+                )}
               >
-                {mode === "block"
-                  ? "Block more seats"
-                  : mode === "hold"
-                    ? "Hold more seats"
-                    : "Reserve more seats"}
-              </button>
-              <Link
-                href="/admin"
-                className="rounded-full border border-bk-line px-7 py-3 text-sm font-semibold transition-colors hover:border-bk-ink"
-              >
-                Go to dashboard
-              </Link>
-            </div>
+                {doneButtons}
+              </TicketCard>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-3">
+                {doneButtons}
+              </div>
+            )}
           </div>
         ) : (
           <>
-            <Stepper
-              steps={STEPS}
-              step={step}
-              onStepClick={(i) => setStep(i)}
-            />
+            {step !== 1 && (
+              <Stepper
+                steps={STEPS}
+                step={step}
+                onStepClick={(i) => setStep(i)}
+              />
+            )}
 
-            <div className="mt-10 pb-28 md:pb-20">
+            <div className={`${step !== 1 ? "mt-10" : ""} pb-28 md:pb-20`}>
               <div className="min-w-0">
                 {step === 0 && selection.venueId && (
                   <DateTimeStep
@@ -443,6 +483,7 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
                         <div className="flex flex-col gap-2 text-sm">
                           <span className="text-bk-muted">
                             Payment received by
+                            {mode === "reserve" ? " (optional)" : ""}
                           </span>
                           <Select
                             value={person.paymentMode}
@@ -450,10 +491,15 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
                               setPerson((p) => ({ ...p, paymentMode: v }))
                             }
                             invalid={Boolean(showErrors && errors.paymentMode)}
-                            options={PAYMENT_MODES.map((m) => ({
-                              value: m,
-                              label: m,
-                            }))}
+                            options={[
+                              ...(mode === "reserve"
+                                ? [{ value: "", label: "Not paid / none" }]
+                                : []),
+                              ...PAYMENT_MODES.map((m) => ({
+                                value: m,
+                                label: m,
+                              })),
+                            ]}
                           />
                           {showErrors && errors.paymentMode && (
                             <span className="text-xs text-red-700">
@@ -515,6 +561,17 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
                   </p>
                 )}
                 <div className="flex items-center gap-3">
+                  {step === 0 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        dirty ? setLeaveOpen(true) : router.push("/admin")
+                      }
+                      className="rounded-full border border-bk-line px-6 py-3 text-sm font-medium transition-colors hover:border-bk-ink"
+                    >
+                      Back
+                    </button>
+                  )}
                   {step > 0 && (
                     <button
                       type="button"
@@ -540,6 +597,48 @@ export default function TicketFlow({ adminName }: { adminName: string }) {
           </>
         )}
       </div>
+
+      {leaveOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Leave booking"
+          className="fixed inset-0 z-50 grid place-items-center bg-bk-ink/40 p-4 backdrop-blur-sm"
+          onMouseDown={(e) =>
+            e.target === e.currentTarget && setLeaveOpen(false)
+          }
+        >
+          <div className="w-full max-w-md rounded-2xl border border-bk-line bg-bk-surface p-6 shadow-2xl">
+            <h3 className="mb-3 text-xl font-semibold tracking-tight">
+              Leave this booking?
+            </h3>
+            <p className="text-bk-muted">
+              The booking is not complete. All the selections you made will
+              disappear if you go back to the dashboard.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setLeaveOpen(false)}
+                className="flex-1 rounded-full border border-bk-line px-6 py-3 font-medium transition-colors hover:border-bk-ink"
+              >
+                Stay
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  // Leaving cancels this booking: coming back starts a new one
+                  reset();
+                  router.push("/admin");
+                }}
+                className="flex-1 rounded-full bg-red-600 px-6 py-3 font-semibold text-white"
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

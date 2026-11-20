@@ -9,23 +9,36 @@ import LoginForm from "./login-form";
 // While ADMIN_AUTH_BYPASS is on (development) the login is skipped.
 // Reads the session cookie, so it renders per request (inside Suspense).
 
-async function Gate({ children }: { children: React.ReactNode }) {
+async function Gate({
+  children,
+  slim,
+}: {
+  children: React.ReactNode;
+  slim: boolean;
+}) {
   const bypass = ADMIN_AUTH_BYPASS && !(await isSignedOut());
   if (!bypass && !(await isAuthenticated())) {
     return <LoginForm configured={isConfigured()} />;
   }
   return (
     <div className="bk-page-bg min-h-screen text-bk-ink">
-      <AdminNav />
+      {!slim && <AdminNav />}
       <main className="mx-auto max-w-6xl px-6 py-12 md:py-16">{children}</main>
     </div>
   );
 }
 
-export default function AdminGate({ children }: { children: React.ReactNode }) {
+// `slim`: no top bar at all (the Booking page is just the booking flow).
+export default function AdminGate({
+  children,
+  slim = false,
+}: {
+  children: React.ReactNode;
+  slim?: boolean;
+}) {
   return (
     <Suspense fallback={<div className="bk-page-bg min-h-screen" />}>
-      <Gate>{children}</Gate>
+      <Gate slim={slim}>{children}</Gate>
     </Suspense>
   );
 }

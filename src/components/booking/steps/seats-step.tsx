@@ -99,7 +99,7 @@ function QuantityPicker({
 
   return (
     <div
-      className="absolute inset-0 z-10 grid place-items-start justify-items-center bg-bk-ink/40 p-4 pt-10 backdrop-blur-sm md:pt-16"
+      className="fixed inset-0 z-50 grid place-items-center bg-bk-ink/40 p-4 backdrop-blur-sm"
       role="dialog"
       aria-label="How many people?"
     >
@@ -226,6 +226,8 @@ export default function SeatsStep({
   const zoomRef = useRef(1);
   const anchor = useRef({ x: 0.5, y: 0.5 });
   const dragMoved = useRef(false);
+  // Which picked seat the next single tap replaces (counts down, then wraps)
+  const swapSlot = useRef(0);
 
   // Zoom around the middle of what is currently visible
   const changeZoom = useCallback((next: number) => {
@@ -312,14 +314,30 @@ export default function SeatsStep({
     );
   };
 
-  // Like the ticket apps: tapping a seat selects the whole group of seats
-  // together (next to it, same row, same block); tapping somewhere else moves
-  // the group there. Tapping a selected seat clears the group.
+  // Like the ticket apps: the first tap selects the whole group of seats
+  // together (next to it, same row, same block). Every tap after that moves one
+  // seat: the last picked seat is dropped and the tapped seat takes its place.
+  // Tapping a selected seat clears the selection.
   const toggle = (id: string) => {
     if (quantity === null || isTaken(id)) return;
     if (selected.has(id)) {
       setNotice("");
       onSeats([]);
+      return;
+    }
+    // Seats already picked: each single tap replaces one seat, starting from
+    // the last (5th), then the 4th, 3rd ... 1st, then the 5th again.
+    if (seats.length > 0) {
+      setNotice("");
+      if (seats.length < quantity) {
+        onSeats([...seats, id]);
+        return;
+      }
+      const slot = Math.min(swapSlot.current, quantity - 1);
+      const next = [...seats];
+      next[slot] = id;
+      swapSlot.current = slot === 0 ? quantity - 1 : slot - 1;
+      onSeats(next);
       return;
     }
     const clicked = SEAT_BY_ID[id];
@@ -352,6 +370,7 @@ export default function SeatsStep({
       setNotice(
         "Seats were not free side by side, so we took the next free ones.",
       );
+      swapSlot.current = quantity - 1;
       onSeats(free.slice(from, from + quantity).map((s) => s.id));
       return;
     }
@@ -359,6 +378,7 @@ export default function SeatsStep({
     const at = rowSeats.findIndex((s) => s.id === id) - lo;
     const start = Math.min(at, run.length - quantity);
     setNotice("");
+    swapSlot.current = quantity - 1;
     onSeats(run.slice(start, start + quantity).map((s) => s.id));
   };
 
@@ -376,7 +396,10 @@ export default function SeatsStep({
         ? ""
         : "No block of seats together is free. Please pick seats on the plan.",
     );
-    if (ids.length) onSeats(ids);
+    if (ids.length) {
+      swapSlot.current = quantity - 1;
+      onSeats(ids);
+    }
   };
 
   return (
@@ -495,7 +518,7 @@ export default function SeatsStep({
 
       <p className="text-sm text-bk-muted">
         Tap a seat and all your seats are selected together, side by side. Tap
-        another spot to move them. Faded seats are sold on BookMyShow.
+        another seat to move one seat there. Faded seats are sold on BookMyShow.
       </p>
 
       {/* Seat plan */}
