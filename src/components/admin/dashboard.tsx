@@ -42,15 +42,15 @@ function Kpi({
         ? "bg-bk-accent"
         : "bg-bk-gold";
   return (
-    <div className="relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-bk-line bg-bk-surface p-5">
+    <div className="relative flex flex-col gap-2 overflow-hidden rounded-2xl border border-bk-line bg-bk-surface p-4 md:gap-3 md:p-5">
       <span aria-hidden className={`absolute inset-y-0 left-0 w-1 ${bar}`} />
-      <span className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-bk-muted">
+      <span className="text-[0.6rem] font-semibold uppercase tracking-[0.14em] text-bk-muted md:text-[0.68rem] md:tracking-[0.18em]">
         {label}
       </span>
-      <span className="text-3xl font-semibold leading-none tracking-tight tabular-nums">
+      <span className="text-xl font-semibold leading-none tracking-tight tabular-nums md:text-3xl">
         {value}
       </span>
-      <span className="text-sm text-bk-muted">{note}</span>
+      <span className="text-xs text-bk-muted md:text-sm">{note}</span>
     </div>
   );
 }
@@ -140,7 +140,9 @@ export default function Dashboard({ adminName }: { adminName: string }) {
     <div className="flex flex-col gap-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-semibold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+            Dashboard
+          </h1>
           <p className="text-bk-muted">
             Welcome, {adminName}. Here is how ticket sales are going.
           </p>
@@ -164,7 +166,7 @@ export default function Dashboard({ adminName }: { adminName: string }) {
       {/* KPIs */}
       <section
         aria-label="Key numbers"
-        className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3"
       >
         <Kpi
           label="Revenue received"

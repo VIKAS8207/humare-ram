@@ -8,6 +8,9 @@ export const EVENT_HEADER = {
 export const EVENT_DATE = {
   label: "Date",
   value: "26 – 27 Dec 2026",
+  // Shown as big numerals
+  days: ["26", "27"],
+  monthYear: "December 2026",
   note: "Saturday & Sunday",
 };
 

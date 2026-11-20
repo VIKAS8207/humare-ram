@@ -13,29 +13,32 @@ export default async function MarqueeSection() {
   const placed = logos.map((l) => ({ ...l, ...tierOf(l) }));
 
   return (
-    <RevealSection className="relative w-full overflow-hidden bg-neutral-950 px-6 py-16 text-white md:py-24">
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-12 md:gap-16">
+    <RevealSection className="relative w-full overflow-hidden bg-neutral-950 px-4 py-12 text-white md:px-6 md:py-24">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-7 md:gap-16">
         <p className="rv text-xs font-medium uppercase tracking-[0.4em] text-orange-400">
           Our Partners
         </p>
 
         {/* Tiers side by side (they wrap onto a new line on small screens) */}
-        <div className="flex w-full flex-wrap items-start justify-center gap-x-6 gap-y-10 md:gap-x-8">
+        <div className="grid w-full grid-cols-2 items-start gap-x-3 gap-y-6 md:flex md:flex-wrap md:justify-center md:gap-x-8 md:gap-y-10">
           {TIERS.map((tier) => {
             const items = placed.filter((l) => l.tier === tier.id);
             if (items.length === 0) return null;
             return (
-              <div key={tier.id} className="flex flex-col items-center gap-5">
+              <div
+                key={tier.id}
+                className="flex flex-col items-center gap-3 md:gap-5"
+              >
                 <h2
-                  className={`rv text-[0.7rem] font-semibold uppercase tracking-[0.35em] ${tier.label_class}`}
+                  className={`rv text-[0.55rem] font-semibold uppercase tracking-[0.2em] md:text-[0.7rem] md:tracking-[0.35em] ${tier.label_class}`}
                 >
                   {tier.label}
                 </h2>
-                <ul className="flex flex-wrap justify-center gap-4">
+                <ul className="flex w-full flex-wrap justify-center gap-4 md:w-auto">
                   {items.map((logo) => (
                     <li
                       key={logo.src}
-                      className={`rv grid h-28 w-56 place-content-center rounded-2xl border px-6 transition-colors md:h-32 md:w-60 ${tier.card}`}
+                      className={`rv grid h-20 w-full place-content-center rounded-xl border px-4 transition-colors md:h-32 md:w-60 md:rounded-2xl md:px-6 ${tier.card}`}
                     >
                       <Image
                         src={logo.src}

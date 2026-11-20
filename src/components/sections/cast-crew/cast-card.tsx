@@ -16,19 +16,19 @@ const initials = (name: string) =>
 // Portrait card: photo fills the frame, name and role sit on a dark fade at the bottom.
 export default function CastCard({ name, role, image }: Props) {
   return (
-    <article className="rv-card group relative aspect-[3/4] overflow-hidden rounded-xl border border-amber-300/15 bg-gradient-to-b from-amber-900/30 to-neutral-900 transition-colors duration-500 hover:border-amber-300/50">
+    <article className="rv-card group relative aspect-[3/4] overflow-hidden rounded-lg border border-amber-300/15 md:rounded-xl bg-gradient-to-b from-amber-900/30 to-neutral-900 transition-colors duration-500 hover:border-amber-300/50">
       {image ? (
         <Image
           src={image}
           alt={`${name}, ${role}`}
           fill
-          sizes="(min-width: 1024px) 180px, (min-width: 640px) 30vw, 45vw"
+          sizes="(min-width: 1024px) 180px, 25vw"
           className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
         />
       ) : (
         <span
           aria-hidden
-          className="absolute inset-0 grid place-content-center text-5xl font-semibold tracking-tight text-amber-300/25"
+          className="absolute inset-0 grid place-content-center text-2xl font-semibold tracking-tight text-amber-300/25 md:text-5xl"
         >
           {initials(name)}
         </span>
@@ -38,11 +38,11 @@ export default function CastCard({ name, role, image }: Props) {
         aria-hidden
         className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-neutral-950 via-neutral-950/70 to-transparent"
       />
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 p-3">
-        <p className="text-[0.6rem] font-medium uppercase leading-tight tracking-[0.2em] text-orange-400">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-0.5 p-1.5 text-center md:items-stretch md:p-3 md:text-left">
+        <p className="line-clamp-2 text-[0.42rem] font-medium uppercase leading-tight tracking-[0.08em] text-orange-400 md:text-[0.6rem] md:tracking-[0.2em]">
           {role}
         </p>
-        <h3 className="text-sm font-semibold leading-tight tracking-tight text-white md:text-base">
+        <h3 className="text-[0.62rem] font-semibold leading-tight tracking-tight text-white md:text-base">
           {name}
         </h3>
       </div>

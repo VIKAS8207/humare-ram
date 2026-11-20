@@ -17,7 +17,7 @@ export default function StatsSection() {
         className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-amber-300/40 to-transparent"
       />
 
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-12 md:grid-cols-5 md:gap-y-0">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 md:grid-cols-5 md:gap-y-0">
         {STATS.map((stat, i) => (
           <div
             key={stat.label}

@@ -26,7 +26,7 @@ export default async function MusicSection() {
   return (
     <MusicReveal
       id="music"
-      className="relative isolate w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_top,rgba(190,95,20,0.18),transparent_60%)] px-6 py-24 text-white md:py-36"
+      className="relative isolate w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_top,rgba(190,95,20,0.18),transparent_60%)] px-4 py-16 text-white md:px-6 md:py-36"
     >
       <Mandala
         className="-left-72 top-24"
@@ -34,29 +34,29 @@ export default async function MusicSection() {
         reverse
         duration={320}
       />
-      <div className="mx-auto flex max-w-6xl flex-col items-center gap-14 md:gap-20">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 md:gap-20">
         {/* Header */}
-        <header className="flex flex-col items-center gap-6 text-center">
+        <header className="flex flex-col items-center gap-4 text-center md:gap-6">
           <p className="m-reveal text-xs font-medium uppercase tracking-[0.4em] text-orange-400">
             {MUSIC_HEADER.eyebrow}
           </p>
-          <h2 className="m-reveal text-[clamp(2.5rem,7vw,5.5rem)] font-semibold leading-none tracking-tight text-amber-100">
+          <h2 className="m-reveal text-[clamp(1.9rem,7vw,5.5rem)] font-semibold leading-none tracking-tight text-amber-100">
             {MUSIC_HEADER.title}
           </h2>
-          <p className="m-reveal max-w-xl text-base text-white/60 md:text-lg">
+          <p className="m-reveal max-w-xl text-sm text-white/60 md:text-lg">
             {MUSIC_HEADER.subtitle}
           </p>
           <Ornament />
         </header>
 
         {/* EP details */}
-        <div className="m-reveal grid w-full max-w-4xl gap-8 border-y border-amber-300/15 py-10 md:grid-cols-[1.4fr_1fr] md:gap-14 md:py-12">
+        <div className="m-reveal grid w-full max-w-4xl gap-6 border-y border-amber-300/15 py-8 md:grid-cols-[1.4fr_1fr] md:gap-14 md:py-12">
           <div className="flex flex-col gap-4">
             <p className="text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
               {MUSIC_EP.label} <span className="mx-2 text-white/30">·</span>{" "}
               {MUSIC_EP.label2}
             </p>
-            <p className="text-base leading-relaxed text-white/75 md:text-lg">
+            <p className="text-sm leading-relaxed text-white/75 md:text-lg">
               {MUSIC_EP.intro}
             </p>
           </div>
@@ -66,14 +66,16 @@ export default async function MusicSection() {
                 <dt className="text-xs font-medium uppercase tracking-[0.3em] text-amber-300/70">
                   {c.role}
                 </dt>
-                <dd className="text-base font-medium text-white">{c.names}</dd>
+                <dd className="text-sm font-medium text-white md:text-base">
+                  {c.names}
+                </dd>
               </div>
             ))}
           </dl>
         </div>
 
         {/* Singers */}
-        <div className="m-grid grid w-full grid-cols-1 justify-items-center gap-14 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="m-grid grid w-full grid-cols-3 justify-items-center gap-2 sm:gap-8 lg:gap-14">
           {SINGERS.map((s) => (
             <SingerCard key={s.slug} {...s} image={images[s.slug]} />
           ))}

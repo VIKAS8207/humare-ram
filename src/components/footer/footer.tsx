@@ -45,7 +45,7 @@ export default function Footer() {
           />
         </div>
       )}
-      <div className="mx-auto max-w-7xl px-6 pb-8 pt-20 md:pt-28">
+      <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 md:px-6 md:pt-28">
         <div className="grid gap-14 md:grid-cols-[1.4fr_2fr] md:gap-20">
           {/* Brand */}
           <div className="mx-auto flex w-fit flex-col items-center gap-6 text-center md:mx-0">
@@ -55,9 +55,11 @@ export default function Footer() {
               width={HERO_LOGO.width}
               height={HERO_LOGO.height}
               sizes="(min-width: 768px) 18rem, 14rem"
-              className="h-auto w-56 select-none md:w-72"
+              className="h-auto w-44 select-none md:w-72"
             />
-            <p className="max-w-56 text-base opacity-70 md:max-w-72">{FOOTER_TAGLINE}</p>
+            <p className="max-w-56 text-sm opacity-70 md:text-base md:max-w-72">
+              {FOOTER_TAGLINE}
+            </p>
             <BookLink
               href={BOOK_NOW_HREF}
               className="rounded-full bg-white px-8 py-3 text-black transition-transform hover:scale-105"

@@ -82,10 +82,10 @@ export default function SpotlightSection({
         reverse={reverse}
         duration={280}
       />
-      <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-4 px-6 md:grid-cols-2 md:gap-10">
+      <div className="relative mx-auto grid max-w-7xl items-center gap-2 px-5 md:min-h-screen md:px-6 md:grid-cols-2 md:gap-10">
         {/* Copy */}
         <div
-          className={`relative z-10 flex flex-col items-start gap-8 pb-4 pt-24 md:py-24 ${
+          className={`relative z-10 flex flex-col items-start gap-5 pb-2 pt-20 md:gap-8 md:py-24 ${
             reverse ? "md:order-2" : ""
           }`}
         >
@@ -97,14 +97,14 @@ export default function SpotlightSection({
               />
               {eyebrow}
             </p>
-            <h2 className="text-[clamp(3rem,8vw,7rem)] font-semibold uppercase leading-[0.95] tracking-tight">
+            <h2 className="text-[clamp(2.1rem,8vw,7rem)] font-semibold uppercase leading-[0.95] tracking-tight">
               {headline.map((line) => (
                 <span key={line} className="spot-line block">
                   {line}
                 </span>
               ))}
             </h2>
-            <p className="spot-copy text-xl font-medium text-orange-300 md:text-2xl">
+            <p className="spot-copy text-base font-medium text-orange-300 md:text-2xl">
               {role}
             </p>
             {tags && (
@@ -112,7 +112,7 @@ export default function SpotlightSection({
                 {tags.map((tag) => (
                   <li
                     key={tag}
-                    className="rounded-full border border-orange-400/50 px-3 py-1 text-xs font-medium uppercase tracking-[0.25em] text-orange-300"
+                    className="rounded-full border border-orange-400/50 px-2.5 py-0.5 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-orange-300 md:px-3 md:py-1 md:text-xs md:tracking-[0.25em]"
                   >
                     {tag}
                   </li>
@@ -121,13 +121,13 @@ export default function SpotlightSection({
             )}
           </div>
 
-          <p className="spot-copy max-w-md text-base leading-relaxed opacity-80 md:text-lg">
+          <p className="spot-copy max-w-md text-sm leading-relaxed opacity-80 md:text-lg">
             {body}
           </p>
         </div>
 
         {/* Character */}
-        <div className="relative h-[75vh] md:h-screen">
+        <div className="relative h-[48vh] md:h-screen">
           <div
             aria-hidden
             className="spot-glow pointer-events-none absolute left-1/2 top-[45%] aspect-square w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl will-change-transform"

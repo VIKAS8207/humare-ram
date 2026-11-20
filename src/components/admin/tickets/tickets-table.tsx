@@ -337,7 +337,7 @@ export default function TicketsTable({
                       className="transition-colors hover:bg-bk-ink/2.5"
                     >
                       <td
-                        className={`${td} font-mono text-[0.8rem] font-semibold`}
+                        className={`${td} whitespace-nowrap font-mono text-[0.8rem] font-semibold`}
                       >
                         {r.id}
                       </td>

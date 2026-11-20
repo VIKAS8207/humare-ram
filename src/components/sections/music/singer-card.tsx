@@ -14,20 +14,20 @@ const initials = (name: string) =>
 export default function SingerCard({ name, description, badge, image }: Props) {
   return (
     <article className="m-card group relative flex flex-col items-center text-center">
-      <div className="relative w-full max-w-72 rounded-t-full border border-amber-300/25 p-2 transition-colors duration-500 group-hover:border-amber-300/70">
+      <div className="relative w-full max-w-72 rounded-t-full border border-amber-300/25 p-1 transition md:p-2-colors duration-500 group-hover:border-amber-300/70">
         <div className="relative aspect-[3/4] overflow-hidden rounded-t-full bg-gradient-to-b from-amber-900/40 to-neutral-900">
           {image ? (
             <Image
               src={image}
               alt={name}
               fill
-              sizes="(min-width: 768px) 288px, 70vw"
+              sizes="(min-width: 768px) 288px, 30vw"
               className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
           ) : (
             <span
               aria-hidden
-              className="absolute inset-0 grid place-content-center text-6xl font-semibold tracking-tight text-amber-300/40"
+              className="absolute inset-0 grid place-content-center text-3xl font-semibold tracking-tight text-amber-300/40 md:text-6xl"
             >
               {initials(name)}
             </span>
@@ -39,16 +39,16 @@ export default function SingerCard({ name, description, badge, image }: Props) {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col items-center gap-3">
+      <div className="mt-3 flex flex-col items-center gap-1.5 md:mt-6 md:gap-3">
         {badge && (
-          <span className="rounded-full border border-orange-400/50 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-orange-300">
+          <span className="rounded-full border border-orange-400/50 px-1.5 py-0.5 text-[0.4rem] font-medium uppercase tracking-[0.1em] text-orange-300 md:px-3 md:py-1 md:text-[0.65rem] md:tracking-[0.25em]">
             {badge}
           </span>
         )}
-        <h3 className="text-xl font-semibold tracking-tight text-amber-100">
+        <h3 className="text-[0.7rem] font-semibold leading-tight tracking-tight text-amber-100 md:text-xl">
           {name}
         </h3>
-        <p className="max-w-xs text-sm leading-relaxed text-white/60">
+        <p className="line-clamp-4 max-w-xs text-[0.5rem] leading-snug text-white/60 md:line-clamp-none md:text-sm md:leading-relaxed">
           {description}
         </p>
       </div>

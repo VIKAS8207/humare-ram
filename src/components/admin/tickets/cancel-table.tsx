@@ -18,7 +18,9 @@ export default function CancelTable() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h1 className="text-4xl font-semibold tracking-tight">Cancel</h1>
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+          Cancel
+        </h1>
         <p className="max-w-2xl text-bk-muted">
           All tickets in one place. Open the menu on a row to see the details or
           cancel the ticket.

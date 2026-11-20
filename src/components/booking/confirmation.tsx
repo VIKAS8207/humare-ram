@@ -33,7 +33,7 @@ export default function ConfirmationView({
         ✓
       </span>
       <div className="flex flex-col gap-3">
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Booking confirmed
         </h1>
         <p className="text-bk-muted">
