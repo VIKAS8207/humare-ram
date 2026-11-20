@@ -18,7 +18,7 @@ export default function StepNav({
   onNext: () => void;
 }) {
   return (
-    <div className="flex items-center gap-2 md:gap-3">
+    <div className="flex items-center gap-1.5 md:gap-3">
       {showBack && (
         <Button
           variant="outline"

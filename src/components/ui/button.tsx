@@ -23,7 +23,7 @@ const SIZES: Record<ButtonSize, string> = {
   md: "px-6 py-3 text-sm",
   lg: "px-8 py-3.5 text-base",
   // slimmer on phones (bottom bars)
-  adaptive: "px-4 py-2 text-sm md:px-6 md:py-3",
+  adaptive: "px-3.5 py-1.5 text-xs md:px-6 md:py-3 md:text-sm",
 };
 
 export function buttonClass({

@@ -75,8 +75,8 @@ export function BookingBar({ selection, children }: Props) {
   return (
     <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-paper/95 px-4 py-2.5 shadow-[0_-8px_30px_-12px_rgba(43,29,18,0.25)] backdrop-blur md:px-6 md:py-4">
       <div className="mx-auto flex max-w-6xl items-center gap-3 md:gap-8">
-        {/* Phones: one slim line (buttons on the left, total + show on the right) */}
-        <div className="min-w-0 flex-1 text-right md:hidden">
+        {/* Phones: one slim line (total + show on the left, buttons on the right) */}
+        <div className="min-w-0 flex-1 text-left md:hidden">
           <p className="text-lg font-semibold leading-none tracking-tight">
             {inr(total)}
           </p>
@@ -115,9 +115,7 @@ export function BookingBar({ selection, children }: Props) {
             </dd>
           </div>
         </dl>
-        <div className="order-first shrink-0 md:order-last md:w-80">
-          {children}
-        </div>
+        <div className="shrink-0 md:w-80">{children}</div>
       </div>
     </div>
   );
