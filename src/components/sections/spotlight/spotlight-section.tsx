@@ -146,6 +146,17 @@ export default function SpotlightSection({
           />
         </div>
       </div>
+      {/* Phones only: fade everything (glow, pattern, figure) into the page
+          colour at the top and bottom edges, so neighbouring sections blend
+          into each other with no hard divide. Sits above the content. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-neutral-950 to-transparent md:hidden"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-36 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent md:hidden"
+      />
     </section>
   );
 }

@@ -34,6 +34,12 @@ export const IMAGES = {
     width: 2485,
     height: 1316,
   },
+  // Curtain + hanging lamps strip at the very top of the hero (phones only)
+  heroTop: {
+    src: "/images/hero/bg-top-hero.png",
+    width: 2048,
+    height: 1762,
+  },
   // Sponsor ("Presented by") logo: white on transparent, Shri Ram Jewellers
   sponsor: {
     src: "/images/hero/sriramjewelleers.png",

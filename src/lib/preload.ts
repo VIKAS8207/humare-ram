@@ -13,6 +13,9 @@ export const HERO_LOGO = {
   sizes: "(min-width: 768px) 40rem, 80vw",
 };
 
+// Curtain strip at the top of the hero on phones (waited for by the mobile loader only)
+export const HERO_TOP = { ...IMAGES.heroTop, sizes: "100vw" };
+
 // Images the loader waits for before revealing the page.
 export const CRITICAL_IMAGES = [LOADER_BG, CHARACTERS, HERO_LOGO];
 

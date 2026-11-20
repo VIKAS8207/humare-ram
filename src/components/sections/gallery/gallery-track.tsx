@@ -139,7 +139,7 @@ export default function GalleryTrack({ title, subtitle, images }: Props) {
     <section
       id="gallery"
       ref={root}
-      className="relative isolate w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_center,rgba(190,95,20,0.16),transparent_65%)] py-14 text-white md:py-28"
+      className="relative isolate w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_center,rgba(190,95,20,0.16),transparent_65%)] py-10 text-white md:py-28"
     >
       <Mandala
         className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -159,12 +159,12 @@ export default function GalleryTrack({ title, subtitle, images }: Props) {
       {/* Items are stacked at the stage centre and positioned by transform. */}
       <div
         ref={stage}
-        className="relative mt-10 h-[clamp(16rem,50vh,38rem)] cursor-grab select-none overflow-hidden [perspective:1100px] [touch-action:pan-y] md:mt-14"
+        className="relative mt-6 h-52 cursor-grab select-none overflow-hidden [perspective:1100px] [touch-action:pan-y] md:mt-14 md:h-[clamp(20rem,58vh,38rem)]"
       >
         {images.map((img, i) => (
           <div
             key={`${img.src}-${i}`}
-            className="absolute left-1/2 top-1/2 aspect-[4/3] w-[clamp(12rem,30vw,28rem)] overflow-hidden rounded-2xl border border-amber-300/20 bg-neutral-900 shadow-2xl shadow-black/60 will-change-transform"
+            className="absolute left-1/2 top-1/2 aspect-[4/3] w-[9.5rem] overflow-hidden rounded-xl md:w-[clamp(15rem,30vw,28rem)] md:rounded-2xl border border-amber-300/20 bg-neutral-900 shadow-2xl shadow-black/60 will-change-transform"
           >
             <Image
               src={img.src}

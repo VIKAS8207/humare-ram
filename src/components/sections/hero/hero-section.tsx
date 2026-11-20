@@ -1,13 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import BookLink from "@/components/transitions/book-link";
+import BookNowButton from "@/components/ui/book-now-button";
 import Image from "next/image";
 import { gsap, useGSAP } from "@/lib/gsap";
 import Embers from "@/components/effects/embers";
 import { CHARACTERS, HERO_LOGO } from "@/lib/preload";
 import { IMAGES } from "@/config/images";
-import { BOOK_NOW_HREF } from "@/components/navbar/nav.data";
 import { LOADER_DONE_EVENT, isLoaderDone } from "@/lib/events";
 import { shouldSkipLoader } from "@/lib/skip-loader";
 
@@ -80,6 +79,23 @@ export default function HeroSection() {
       ref={root}
       className="relative flex h-screen h-dvh w-full items-center justify-center overflow-hidden bg-neutral-950 text-white"
     >
+      {/* Phones only: curtain + lamps at the very top, fading to black below */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 md:hidden"
+      >
+        <Image
+          src={IMAGES.heroTop.src}
+          alt=""
+          width={IMAGES.heroTop.width}
+          height={IMAGES.heroTop.height}
+          priority
+          sizes="100vw"
+          className="h-auto w-full select-none"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent" />
+      </div>
+
       <div
         aria-hidden
         className="hero-glow pointer-events-none absolute left-1/2 top-1/2 size-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/30 blur-3xl will-change-transform"
@@ -140,12 +156,7 @@ export default function HeroSection() {
             className="hero-rotary h-auto w-40 select-none brightness-[1.9] md:w-56"
           />
         </div>
-        <BookLink
-          href={BOOK_NOW_HREF}
-          className="hero-cta rounded-full bg-white px-8 py-3 text-black transition-transform hover:scale-105"
-        >
-          Book Now
-        </BookLink>
+        <BookNowButton className="hero-cta" />
       </div>
     </section>
   );

@@ -52,9 +52,13 @@ export default async function MusicSection() {
         {/* EP details */}
         <div className="m-reveal grid w-full max-w-4xl gap-6 border-y border-amber-300/15 py-8 md:grid-cols-[1.4fr_1fr] md:gap-14 md:py-12">
           <div className="flex flex-col gap-4">
-            <p className="text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
-              {MUSIC_EP.label} <span className="mx-2 text-white/30">·</span>{" "}
-              {MUSIC_EP.label2}
+            {/* Two lines, centred on phones; one line on larger screens */}
+            <p className="flex flex-col items-center gap-1 text-center text-xs font-medium uppercase tracking-[0.3em] text-orange-400 md:flex-row md:items-baseline md:gap-0 md:text-left">
+              <span>{MUSIC_EP.label}</span>
+              <span aria-hidden className="mx-2 hidden text-white/30 md:inline">
+                ·
+              </span>
+              <span>{MUSIC_EP.label2}</span>
             </p>
             <p className="text-sm leading-relaxed text-white/75 md:text-lg">
               {MUSIC_EP.intro}

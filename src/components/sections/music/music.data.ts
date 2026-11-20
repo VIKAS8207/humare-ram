@@ -32,7 +32,6 @@ export const SINGERS: Singer[] = [
     slug: "shankar-mahadevan",
     description:
       "Legendary Bollywood playback maestro — his powerful voice elevates the devotional core of the production",
-    badge: "T-Series EP",
   },
   {
     name: "Sonu Nigam",

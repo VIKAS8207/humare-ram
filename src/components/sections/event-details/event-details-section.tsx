@@ -1,6 +1,4 @@
 import Mandala from "@/components/effects/mandala";
-import BookLink from "@/components/transitions/book-link";
-import { BOOK_NOW_HREF } from "@/components/navbar/nav.data";
 import RevealSection from "@/components/ui/reveal-section";
 import { FACT_ICONS, PinIcon } from "./event-icons";
 import {
@@ -38,7 +36,7 @@ export default function EventDetailsSection() {
           </p>
         </header>
 
-        {/* One "pass": date | venue | facts, with Book Now on the bottom strip */}
+        {/* One "pass": date | venue | facts */}
         <div className="rv overflow-hidden rounded-[2rem] border border-amber-300/25 bg-gradient-to-br from-amber-400/[0.10] via-neutral-900/60 to-neutral-950 shadow-[0_30px_80px_-40px_rgba(255,150,40,0.45)]">
           <div className="grid lg:grid-cols-[1fr_1.15fr_1fr]">
             {/* Date */}
@@ -116,19 +114,6 @@ export default function EventDetailsSection() {
                 );
               })}
             </ul>
-          </div>
-
-          {/* Bottom strip */}
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-amber-300/20 bg-black/30 px-5 py-5 sm:flex-row md:px-8 md:py-6">
-            <p className="text-center text-sm text-white/60 sm:text-left">
-              Limited seats. Book yours before they are gone.
-            </p>
-            <BookLink
-              href={BOOK_NOW_HREF}
-              className="rounded-full bg-white px-10 py-3 text-black transition-transform hover:scale-105"
-            >
-              Book Now
-            </BookLink>
           </div>
         </div>
       </div>

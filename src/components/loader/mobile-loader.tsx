@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { CRITICAL_IMAGES, preloadImages } from "@/lib/preload";
+import { CRITICAL_IMAGES, HERO_TOP, preloadImages } from "@/lib/preload";
 import { LOADER_DONE_EVENT, markLoaderDone } from "@/lib/events";
 import { MOBILE_QUERY, shouldSkipLoader } from "@/lib/skip-loader";
 
@@ -101,7 +101,7 @@ export default function MobileLoader() {
       window.setTimeout(start, MAX_WAIT),
     );
 
-    preloadImages(CRITICAL_IMAGES, (ratio) => {
+    preloadImages([...CRITICAL_IMAGES, HERO_TOP], (ratio) => {
       imagesRatio = ratio;
       check();
     });

@@ -2,10 +2,9 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
 import Petals from "@/components/effects/petals";
-import BookLink from "@/components/transitions/book-link";
+import BookNowButton from "@/components/ui/book-now-button";
 import { HERO_LOGO } from "@/lib/preload";
 import { IMAGES } from "@/config/images";
-import { BOOK_NOW_HREF } from "@/components/navbar/nav.data";
 import {
   CONTACT_LINKS,
   COPYRIGHT_YEAR,
@@ -60,12 +59,7 @@ export default function Footer() {
             <p className="max-w-56 text-sm opacity-70 md:text-base md:max-w-72">
               {FOOTER_TAGLINE}
             </p>
-            <BookLink
-              href={BOOK_NOW_HREF}
-              className="rounded-full bg-white px-8 py-3 text-black transition-transform hover:scale-105"
-            >
-              Book Now
-            </BookLink>
+            <BookNowButton />
           </div>
 
           {/* Link columns */}

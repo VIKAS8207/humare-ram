@@ -1,11 +1,11 @@
 "use client";
 
 import { useRef } from "react";
-import BookLink from "@/components/transitions/book-link";
+import BookNowButton from "@/components/ui/book-now-button";
 import Image from "next/image";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { HERO_LOGO } from "@/lib/preload";
-import { BOOK_NOW_HREF, NAV_LINKS } from "./nav.data";
+import { NAV_LINKS } from "./nav.data";
 
 const SHOW_AFTER_PX = 50;
 
@@ -75,12 +75,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <BookLink
-          href={BOOK_NOW_HREF}
-          className="shrink-0 rounded-full bg-white px-5 py-2 text-sm font-medium text-black transition-transform hover:scale-105"
-        >
-          Book Now
-        </BookLink>
+        <BookNowButton size="sm" className="shrink-0" />
       </nav>
     </header>
   );
