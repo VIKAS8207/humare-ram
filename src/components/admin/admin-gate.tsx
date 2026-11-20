@@ -21,7 +21,7 @@ async function Gate({
     return <LoginForm configured={isConfigured()} />;
   }
   return (
-    <div className="bk-page-bg min-h-screen text-bk-ink">
+    <div className="paper-page-bg min-h-screen text-ink">
       {!slim && <AdminNav />}
       <main className="mx-auto max-w-6xl px-6 py-12 md:py-16">{children}</main>
     </div>
@@ -37,7 +37,7 @@ export default function AdminGate({
   slim?: boolean;
 }) {
   return (
-    <Suspense fallback={<div className="bk-page-bg min-h-screen" />}>
+    <Suspense fallback={<div className="paper-page-bg min-h-screen" />}>
       <Gate slim={slim}>{children}</Gate>
     </Suspense>
   );

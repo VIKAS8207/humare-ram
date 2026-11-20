@@ -1,4 +1,5 @@
 import QRCode from "qrcode";
+import { PALETTE as P } from "@/config/palette";
 
 // Ticket = one self-contained SVG (works on screen and downloads as a PNG).
 // The QR holds the booking reference + seats + show, so the gate can scan it.
@@ -55,7 +56,7 @@ function qrPath(text: string, size: number, x: number, y: number) {
   return d;
 }
 
-const CREAM = "#f7ecd6";
+const CREAM = P.ivory;
 const FONT = "Helvetica, Arial, sans-serif";
 
 /** Seat chips, wrapped into at most 2 rows; the rest becomes "+N" */
@@ -76,7 +77,7 @@ function seatChips(seats: string[], x0: number, y0: number, maxX: number) {
     const label = last ? `+${seats.length - i}` : text;
     const cw = last ? 46 : w;
     chips.push(
-      `<rect x="${x}" y="${y}" width="${cw}" height="28" rx="8" fill="#f3d38a" fill-opacity="0.12" stroke="#f3d38a" stroke-opacity="0.55"/>` +
+      `<rect x="${x}" y="${y}" width="${cw}" height="28" rx="8" fill="${P.goldLine}" fill-opacity="0.12" stroke="${P.goldLine}" stroke-opacity="0.55"/>` +
         `<text x="${x + cw / 2}" y="${y + 19}" text-anchor="middle" font-family="${FONT}" font-size="14" font-weight="700" fill="${CREAM}">${esc(label)}</text>`,
     );
     if (last) break;
@@ -98,27 +99,27 @@ export function buildTicketSvg(t: TicketData): string {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
 <defs>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1a0e"/><stop offset="0.55" stop-color="#150e08"/><stop offset="1" stop-color="#0d0905"/></linearGradient>
-<linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f8dd9c"/><stop offset="1" stop-color="#d9962f"/></linearGradient>
-<radialGradient id="glow" cx="0.18" cy="0" r="0.8"><stop offset="0" stop-color="#ff9f2e" stop-opacity="0.28"/><stop offset="1" stop-color="#ff9f2e" stop-opacity="0"/></radialGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${P.ticketBg[0]}"/><stop offset="0.55" stop-color="${P.ticketBg[1]}"/><stop offset="1" stop-color="${P.ticketBg[2]}"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${P.goldLight}"/><stop offset="1" stop-color="${P.goldDeep}"/></linearGradient>
+<radialGradient id="glow" cx="0.18" cy="0" r="0.8"><stop offset="0" stop-color="${P.ember}" stop-opacity="0.28"/><stop offset="1" stop-color="${P.ember}" stop-opacity="0"/></radialGradient>
 <clipPath id="shape"><path d="${shape}"/></clipPath>
 </defs>
 <path d="${shape}" fill="url(#bg)"/>
 <g clip-path="url(#shape)">
 <rect width="${W}" height="${H}" fill="url(#glow)"/>
-<g fill="none" stroke="#f3d38a" stroke-opacity="0.07" stroke-width="1.5">
+<g fill="none" stroke="${P.goldLine}" stroke-opacity="0.07" stroke-width="1.5">
 <circle cx="0" cy="${H}" r="120"/><circle cx="0" cy="${H}" r="180"/><circle cx="0" cy="${H}" r="240"/><circle cx="0" cy="${H}" r="300"/><circle cx="0" cy="${H}" r="360"/>
 </g>
 <rect x="0" y="0" width="${W}" height="6" fill="url(#gold)"/>
 <rect x="${SPLIT}" y="6" width="${W - SPLIT}" height="${H - 6}" fill="#000" fill-opacity="0.22"/>
 </g>
-<path d="${shape}" fill="none" stroke="#f3d38a" stroke-opacity="0.38" stroke-width="1.5"/>
-<line x1="${SPLIT}" y1="${N + 8}" x2="${SPLIT}" y2="${H - N - 8}" stroke="#f3d38a" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="3 8" stroke-linecap="round"/>
+<path d="${shape}" fill="none" stroke="${P.goldLine}" stroke-opacity="0.38" stroke-width="1.5"/>
+<line x1="${SPLIT}" y1="${N + 8}" x2="${SPLIT}" y2="${H - N - 8}" stroke="${P.goldLine}" stroke-opacity="0.45" stroke-width="2" stroke-dasharray="3 8" stroke-linecap="round"/>
 
-<text x="44" y="52" font-family="${FONT}" font-size="11.5" letter-spacing="5" fill="#f3d38a">LIVE ON STAGE</text>
+<text x="44" y="52" font-family="${FONT}" font-size="11.5" letter-spacing="5" fill="${P.goldLine}">LIVE ON STAGE</text>
 <text x="44" y="108" font-family="${FONT}" font-size="54" font-weight="800" fill="url(#gold)">Humare Ram</text>
 <text x="44" y="134" font-family="${FONT}" font-size="13" fill="${CREAM}" fill-opacity="0.6">${esc(t.venue)}</text>
-<line x1="44" y1="156" x2="${SPLIT - 44}" y2="156" stroke="#f3d38a" stroke-opacity="0.25"/>
+<line x1="44" y1="156" x2="${SPLIT - 44}" y2="156" stroke="${P.goldLine}" stroke-opacity="0.25"/>
 
 ${label(44, 186, "Date")}${value(44, 210, t.dateLong, 18)}
 ${label(372, 186, "Time")}${value(372, 210, t.time, 18)}
@@ -127,10 +128,10 @@ ${seatChips(t.seats, 44, 256, SPLIT - 44)}
 ${label(44, 340, "Name")}${value(44, 362, t.name, 16)}
 ${label(372, 340, "Amount")}${value(372, 362, t.amount, 16)}
 
-<text x="${stubX}" y="46" text-anchor="middle" font-family="${FONT}" font-size="11.5" letter-spacing="4" fill="#f3d38a">ADMIT ${t.seats.length}</text>
+<text x="${stubX}" y="46" text-anchor="middle" font-family="${FONT}" font-size="11.5" letter-spacing="4" fill="${P.goldLine}">ADMIT ${t.seats.length}</text>
 <text x="${stubX}" y="64" text-anchor="middle" font-family="${FONT}" font-size="10" letter-spacing="3" fill="${CREAM}" fill-opacity="0.5">${esc((t.status ?? "Ticket").toUpperCase())}</text>
-<rect x="${stubX - 100}" y="80" width="200" height="200" rx="14" fill="#fbf4e4"/>
-<path d="${qrPath(qrPayload(t), 172, stubX - 86, 94)}" fill="#1a1109"/>
+<rect x="${stubX - 100}" y="80" width="200" height="200" rx="14" fill="${P.ticketQrPanel}"/>
+<path d="${qrPath(qrPayload(t), 172, stubX - 86, 94)}" fill="${P.ticketQrInk}"/>
 ${label(stubX, 310, "Booking reference", "middle")}
 <text x="${stubX}" y="336" text-anchor="middle" font-family="Courier New, monospace" font-size="21" font-weight="700" fill="url(#gold)">${esc(t.reference)}</text>
 <text x="${stubX}" y="360" text-anchor="middle" font-family="${FONT}" font-size="10" fill="${CREAM}" fill-opacity="0.45">Scan this code at the entrance</text>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ButtonLink } from "@/components/ui";
 import { VENUES } from "./booking.data";
 import type { Attendee, Confirmation, Selection } from "./booking.types";
 import { dateParts, formatTime, inr, sortSeats } from "./booking.utils";
@@ -19,28 +19,25 @@ export default function ConfirmationView({
   const venue = VENUES.find((v) => v.id === selection.venueId);
 
   const homeLink = (
-    <Link
-      href="/"
-      className="rounded-full bg-bk-ink px-7 py-3 text-sm font-semibold text-bk-bg transition-transform hover:scale-105"
-    >
+    <ButtonLink href="/" variant="dark">
       Back to home
-    </Link>
+    </ButtonLink>
   );
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center gap-8 py-10 text-center">
-      <span className="grid size-16 place-content-center rounded-full bg-bk-accent text-3xl text-bk-accent-ink">
+      <span className="grid size-16 place-content-center rounded-full bg-accent text-3xl text-accent-ink">
         ✓
       </span>
       <div className="flex flex-col gap-3">
         <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Booking confirmed
         </h1>
-        <p className="text-bk-muted">
+        <p className="text-ink-muted">
           {attendee.email.trim() ? (
             <>
               A confirmation will be sent to{" "}
-              <span className="text-bk-ink">{attendee.email}</span>.
+              <span className="text-ink">{attendee.email}</span>.
             </>
           ) : (
             "Your booking is confirmed."
@@ -48,7 +45,7 @@ export default function ConfirmationView({
         </p>
       </div>
 
-      <dl className="flex w-full flex-col gap-4 rounded-2xl border border-bk-line bg-bk-surface p-6 text-left text-sm">
+      <dl className="flex w-full flex-col gap-4 rounded-2xl border border-line bg-paper-raised p-6 text-left text-sm">
         {[
           ["Reference", confirmation.reference],
           ["Venue", venue ? `${venue.name}, ${venue.city}` : "—"],
@@ -62,7 +59,7 @@ export default function ConfirmationView({
           ["Amount", inr(totalOf(selection.seats))],
         ].map(([label, value]) => (
           <div key={label} className="flex justify-between gap-6">
-            <dt className="text-bk-muted">{label}</dt>
+            <dt className="text-ink-muted">{label}</dt>
             <dd className="text-right font-medium">{value}</dd>
           </div>
         ))}

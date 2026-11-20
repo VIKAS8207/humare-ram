@@ -1,3 +1,4 @@
+import { Eyebrow } from "@/components/ui";
 import { PAYMENTS_ENABLED } from "@/lib/payment";
 import type { Attendee } from "../booking.types";
 import { SEAT_CATEGORIES } from "../booking.data";
@@ -73,17 +74,17 @@ export default function ReviewPayStep({
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Review & pay
         </h2>
-        <p className="text-bk-muted">
+        <p className="text-ink-muted">
           Check your booking and tell us where to send your tickets.
         </p>
       </header>
 
       {/* Price breakdown */}
       <section aria-label="Your seats" className="flex flex-col gap-4">
-        <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
+        <Eyebrow as="h3" tone="bronze" tracking="wide">
           Your seats
-        </h3>
-        <ul className="divide-y divide-bk-line rounded-2xl border border-bk-line">
+        </Eyebrow>
+        <ul className="divide-y divide-line rounded-2xl border border-line">
           {groups.map(({ category, seats: s }) => (
             <li
               key={category.id}
@@ -92,9 +93,9 @@ export default function ReviewPayStep({
               <div className="flex flex-col gap-1">
                 <span className="font-medium">
                   {category.name}{" "}
-                  <span className="text-bk-muted">× {s.length}</span>
+                  <span className="text-ink-muted">× {s.length}</span>
                 </span>
-                <span className="text-sm text-bk-muted">{s.join(", ")}</span>
+                <span className="text-sm text-ink-muted">{s.join(", ")}</span>
               </div>
               <span className="font-medium">
                 {inr(category.price * s.length)}
@@ -106,9 +107,9 @@ export default function ReviewPayStep({
 
       {/* Attendee details */}
       <section aria-label="Your details" className="flex flex-col gap-5">
-        <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
+        <Eyebrow as="h3" tone="bronze" tracking="wide">
           Your details
-        </h3>
+        </Eyebrow>
         <div className="grid gap-5 md:grid-cols-2">
           {FIELDS.map((f) => {
             const error = showErrors ? errors[f.key] : undefined;
@@ -117,7 +118,7 @@ export default function ReviewPayStep({
                 key={f.key}
                 className={`flex flex-col gap-2 text-sm ${f.key === "name" ? "md:col-span-2" : ""}`}
               >
-                <span className="text-bk-muted">{f.label}</span>
+                <span className="text-ink-muted">{f.label}</span>
                 <input
                   type={f.type}
                   value={attendee[f.key]}
@@ -126,46 +127,48 @@ export default function ReviewPayStep({
                   placeholder={f.placeholder}
                   aria-invalid={Boolean(error)}
                   onChange={(e) => onAttendee(f.key, e.target.value)}
-                  className={`rounded-xl border bg-bk-surface px-4 py-3 text-base text-bk-ink outline-none transition-colors placeholder:text-bk-muted/60 focus:border-bk-accent ${
-                    error ? "border-red-600" : "border-bk-line"
+                  className={`rounded-xl border bg-paper-raised px-4 py-3 text-base text-ink outline-none transition-colors placeholder:text-ink-muted/60 focus:border-accent ${
+                    error ? "border-danger" : "border-line"
                   }`}
                 />
-                {error && <span className="text-xs text-red-700">{error}</span>}
+                {error && (
+                  <span className="text-xs text-danger-strong">{error}</span>
+                )}
               </label>
             );
           })}
         </div>
       </section>
 
-      <label className="flex items-start gap-3 text-sm text-bk-muted">
+      <label className="flex items-start gap-3 text-sm text-ink-muted">
         <input
           type="checkbox"
           checked={terms}
           onChange={(e) => onTerms(e.target.checked)}
-          className="mt-0.5 size-4 accent-bk-accent"
+          className="mt-0.5 size-4 accent-accent"
         />
         <span>
           I agree to the terms and conditions and the cancellation policy.
         </span>
       </label>
       {showErrors && !terms && (
-        <p className="-mt-6 text-xs text-red-700">
+        <p className="-mt-6 text-xs text-danger-strong">
           Please accept the terms to continue.
         </p>
       )}
 
       {!PAYMENTS_ENABLED && (
-        <p className="rounded-xl border border-bk-line bg-bk-gold/10 p-4 text-sm text-bk-ink">
+        <p className="rounded-xl border border-line bg-bronze/10 p-4 text-sm text-ink">
           Demo mode: online payment isn&apos;t connected yet, so no money will
           be taken and no real tickets are issued.
         </p>
       )}
       {payError && (
-        <p role="alert" className="text-sm text-red-700">
+        <p role="alert" className="text-sm text-danger-strong">
           {payError}
         </p>
       )}
-      {paying && <p className="text-sm text-bk-muted">Processing payment…</p>}
+      {paying && <p className="text-sm text-ink-muted">Processing payment…</p>}
     </div>
   );
 }

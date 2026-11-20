@@ -9,7 +9,7 @@ export default function VenueStep({ venueId, onSelect }: Props) {
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Choose your venue
         </h2>
-        <p className="text-bk-muted">
+        <p className="text-ink-muted">
           Select the city and theatre where you would like to watch the show.
         </p>
       </header>
@@ -30,15 +30,15 @@ export default function VenueStep({ venueId, onSelect }: Props) {
               onClick={() => onSelect(v.id)}
               className={`flex flex-col gap-3 rounded-2xl border p-6 text-left transition-colors ${
                 selected
-                  ? "border-bk-accent bg-bk-accent/10"
-                  : "border-bk-line bg-bk-surface hover:border-bk-accent/50"
+                  ? "border-accent bg-accent/10"
+                  : "border-line bg-paper-raised hover:border-accent/50"
               }`}
             >
-              <span className="text-xs font-medium uppercase tracking-[0.3em] text-bk-accent">
+              <span className="text-xs font-medium uppercase tracking-[0.3em] text-accent">
                 {v.city}
               </span>
               <span className="text-xl font-semibold">{v.name}</span>
-              <span className="text-sm text-bk-muted">{v.address}</span>
+              <span className="text-sm text-ink-muted">{v.address}</span>
             </button>
           );
         })}

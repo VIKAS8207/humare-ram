@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Modal from "@/components/ui/modal";
+import { ConfirmDialog } from "@/components/ui";
+import PageTitle from "@/components/ui/page-title";
 import {
   removeSeatRecord,
   useSeatRecords,
@@ -17,15 +18,10 @@ export default function CancelTable() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-          Cancel
-        </h1>
-        <p className="max-w-2xl text-bk-muted">
-          All tickets in one place. Open the menu on a row to see the details or
-          cancel the ticket.
-        </p>
-      </div>
+      <PageTitle
+        title="Cancel"
+        subtitle="All tickets in one place. Open the menu on a row to see the details or cancel the ticket."
+      />
 
       <TicketsTable
         records={records}
@@ -35,33 +31,20 @@ export default function CancelTable() {
       />
 
       {cancelling && (
-        <Modal title="Cancel this ticket?" onClose={() => setCancelling(null)}>
-          <p className="text-sm text-bk-muted">
-            {cancelling.id} · {cancelling.person.name} ·{" "}
-            {cancelling.seats.length} seat
-            {cancelling.seats.length > 1 ? "s" : ""}. The ticket stops working
-            and the seats become free for everyone. This cannot be undone.
-          </p>
-          <div className="mt-6 flex gap-3">
-            <button
-              type="button"
-              onClick={() => setCancelling(null)}
-              className="flex-1 rounded-full border border-bk-line px-6 py-3 font-medium transition-colors hover:border-bk-ink"
-            >
-              Keep ticket
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                removeSeatRecord(cancelling.id);
-                setCancelling(null);
-              }}
-              className="flex-1 rounded-full bg-red-600 px-6 py-3 font-semibold text-white"
-            >
-              Cancel ticket
-            </button>
-          </div>
-        </Modal>
+        <ConfirmDialog
+          title="Cancel this ticket?"
+          cancelLabel="Keep ticket"
+          confirmLabel="Cancel ticket"
+          onCancel={() => setCancelling(null)}
+          onConfirm={() => {
+            removeSeatRecord(cancelling.id);
+            setCancelling(null);
+          }}
+        >
+          {cancelling.id} · {cancelling.person.name} · {cancelling.seats.length}{" "}
+          seat{cancelling.seats.length > 1 ? "s" : ""}. The ticket stops working
+          and the seats become free for everyone. This cannot be undone.
+        </ConfirmDialog>
       )}
     </div>
   );

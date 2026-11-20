@@ -73,18 +73,7 @@ for (const row of PLAN_ROWS) {
 }
 
 /** Bookable rows from the stage outwards — used to sort seats for display. */
-export const ROW_ORDER = [
-  "A",
-  "B",
-  "C",
-  "D",
-  "E",
-  "F",
-  "G",
-  "H",
-  "I",
-  "VVIP",
-];
+export const ROW_ORDER = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "VVIP"];
 
 export const PLAN_WIDTH = px(530);
 export const STAGE = {

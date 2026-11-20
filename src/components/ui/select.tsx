@@ -90,13 +90,9 @@ export default function Select({
         aria-invalid={invalid || undefined}
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={onKeyDown}
-        className={`flex w-full items-center justify-between gap-3 rounded-xl border bg-bk-surface px-4 py-3 text-left text-base outline-none transition-colors focus-visible:border-bk-accent ${
-          open
-            ? "border-bk-accent"
-            : invalid
-              ? "border-red-600"
-              : "border-bk-line"
-        } ${selected ? "text-bk-ink" : "text-bk-muted/70"} ${className}`}
+        className={`flex w-full items-center justify-between gap-3 rounded-xl border bg-paper-raised px-4 py-3 text-left text-base outline-none transition-colors focus-visible:border-accent ${
+          open ? "border-accent" : invalid ? "border-danger" : "border-line"
+        } ${selected ? "text-ink" : "text-ink-muted/70"} ${className}`}
       >
         <span className="truncate">
           {selected ? selected.label : placeholder}
@@ -104,7 +100,7 @@ export default function Select({
         {/* Arrow: its own box, so it is exactly centred vertically */}
         <span
           aria-hidden
-          className="grid size-5 shrink-0 place-content-center text-bk-muted"
+          className="grid size-5 shrink-0 place-content-center text-ink-muted"
         >
           <svg
             width="12"
@@ -126,7 +122,7 @@ export default function Select({
         <ul
           id={`${id}-list`}
           role="listbox"
-          className="absolute left-0 right-0 top-full z-40 mt-2 max-h-64 overflow-auto rounded-xl border border-bk-line bg-bk-surface p-1.5 shadow-2xl shadow-bk-ink/20"
+          className="absolute left-0 right-0 top-full z-40 mt-2 max-h-64 overflow-auto rounded-xl border border-line bg-paper-raised p-1.5 shadow-2xl shadow-ink/20"
         >
           {options.map((o, i) => {
             const isSelected = o.value === value;
@@ -140,16 +136,16 @@ export default function Select({
                 onClick={() => pick(i)}
                 className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                   isSelected
-                    ? "bg-bk-accent text-bk-accent-ink"
+                    ? "bg-accent text-accent-ink"
                     : i === active
-                      ? "bg-bk-ink/5 text-bk-ink"
-                      : "text-bk-ink/80"
+                      ? "bg-ink/5 text-ink"
+                      : "text-ink/80"
                 }`}
               >
                 <span>{o.label}</span>
                 {o.hint && (
                   <span
-                    className={`text-xs ${isSelected ? "opacity-80" : "text-bk-muted"}`}
+                    className={`text-xs ${isSelected ? "opacity-80" : "text-ink-muted"}`}
                   >
                     {o.hint}
                   </span>

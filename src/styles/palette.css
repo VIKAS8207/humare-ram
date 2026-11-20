@@ -1,0 +1,58 @@
+/* ═════════════════════════════════════════════════════════════════════════════
+   HUMARE RAM — COLOUR PALETTE  (the one place colours are defined)
+
+   Use these names in class names: bg-stage, text-gold, border-line, ring-ember…
+   Opacity works as usual: text-ivory/60, border-gold/25, bg-ember/10.
+   Do NOT use raw colours (orange-400, #b8431a…) in components. Add a token here.
+
+   Two themes share the palette:
+     STAGE  the dark theatre website (home page, footer, loader)
+     PAPER  the warm cream pages (booking flow, tickets, admin)
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  /* ── STAGE · dark site ───────────────────────────────────────────────────── */
+  --color-stage: var(--color-neutral-950); /* page + section background */
+  --color-stage-soft: var(--color-neutral-900); /* raised panels, menus */
+  --color-ivory: #f7ecd6; /* warm off-white text on the ticket */
+
+  --color-ember: var(--color-orange-400); /* eyebrows, small accents */
+  --color-ember-soft: var(--color-orange-300);
+  --color-ember-deep: var(--color-orange-500);
+
+  --color-gold: var(--color-amber-300); /* borders, labels, icons */
+  --color-gold-soft: var(--color-amber-200);
+  --color-gold-pale: var(--color-amber-100);
+  --color-gold-strong: var(--color-amber-400);
+  --color-gold-line: #f3d38a; /* soft gold hairlines (ticket) */
+  --color-gold-shade: var(
+    --color-amber-900
+  ); /* dark brown wash behind photos */
+
+  /* Metallic gold gradient (Book Now button, ticket title): light → deep */
+  --color-gold-light: #fbe3a0;
+  --color-gold-mid: #f0bb4f;
+  --color-gold-deep: #c98a2b;
+
+  /* ── PAPER · cream pages (booking, tickets, admin) ───────────────────────── */
+  --color-paper: #fcf8f0; /* page background */
+  --color-paper-raised: #fffcf6; /* cards, inputs, menus */
+  --color-ink: #2b1d12; /* main text */
+  --color-ink-muted: #7a6650; /* secondary text */
+  --color-line: #d8c8aa; /* borders, dividers */
+  --color-accent: #b8431a; /* primary buttons, selected state */
+  --color-accent-ink: #fff7ea; /* text on accent */
+  --color-bronze: #a06a12; /* small gold labels on paper */
+
+  /* ── STATUS (both themes) ────────────────────────────────────────────────── */
+  --color-ok: var(--color-green-700); /* paid / booked */
+  --color-ok-strong: var(--color-green-800);
+  --color-danger: var(--color-red-600); /* cancel / release / errors (fills) */
+  --color-danger-strong: var(--color-red-700); /* error + danger text */
+
+  /* ── SPONSOR TIERS (home page partners) ──────────────────────────────────── */
+  --color-tier-diamond: var(--color-sky-300);
+  --color-tier-diamond-soft: var(--color-sky-200);
+  --color-tier-platinum: var(--color-slate-200);
+  --color-tier-platinum-soft: var(--color-slate-100);
+}

@@ -86,10 +86,7 @@ export const validateAttendee = (a: {
   const errors: Partial<Record<"name" | "email" | "phone", string>> = {};
   if (a.name.trim().length < 2) errors.name = "Enter your full name";
   // Email is optional; only check the format when one is given
-  if (
-    a.email.trim() &&
-    !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a.email.trim())
-  )
+  if (a.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(a.email.trim()))
     errors.email = "Enter a valid email";
   if (!/^[6-9]\d{9}$/.test(a.phone.replace(/[\s-]/g, "")))
     errors.phone = "Enter a 10-digit mobile number";

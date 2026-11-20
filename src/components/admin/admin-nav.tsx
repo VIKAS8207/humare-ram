@@ -36,7 +36,7 @@ export default function AdminNav() {
   }, [open]);
 
   return (
-    <header className="relative z-20 border-b border-bk-line bg-bk-bg text-bk-ink">
+    <header className="relative z-20 border-b border-line bg-paper text-ink">
       <nav
         aria-label="Admin"
         className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-2 gap-y-3 px-6 py-3 md:grid md:grid-cols-[1fr_auto_1fr]"
@@ -54,7 +54,7 @@ export default function AdminNav() {
             sizes="96px"
             className="h-9 w-auto select-none"
           />
-          <span className="rounded-full border border-bk-accent/50 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-bk-accent">
+          <span className="rounded-full border border-accent/50 px-3 py-1 text-[0.65rem] font-medium uppercase tracking-[0.25em] text-accent">
             Admin
           </span>
         </Link>
@@ -67,8 +67,8 @@ export default function AdminNav() {
             aria-current={onDashboard ? "page" : undefined}
             className={`${pill} ${
               onDashboard
-                ? "bg-bk-accent text-bk-accent-ink"
-                : "text-bk-muted hover:bg-bk-ink/5 hover:text-bk-ink"
+                ? "bg-accent text-accent-ink"
+                : "text-ink-muted hover:bg-ink/5 hover:text-ink"
             }`}
           >
             Dashboard
@@ -83,8 +83,8 @@ export default function AdminNav() {
               onClick={() => setOpen((v) => !v)}
               className={`${pill} ${
                 onTickets || open
-                  ? "bg-bk-ink/5 text-bk-ink"
-                  : "text-bk-muted hover:bg-bk-ink/5 hover:text-bk-ink"
+                  ? "bg-ink/5 text-ink"
+                  : "text-ink-muted hover:bg-ink/5 hover:text-ink"
               }`}
             >
               Tickets
@@ -108,7 +108,7 @@ export default function AdminNav() {
               <ul
                 role="menu"
                 aria-label="Tickets"
-                className="absolute left-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-xl border border-bk-line bg-bk-surface p-1.5 shadow-2xl shadow-bk-ink/20"
+                className="absolute left-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-xl border border-line bg-paper-raised p-1.5 shadow-2xl shadow-ink/20"
               >
                 {TICKET_ACTIONS.map((a, i) => {
                   const active = pathname === `/admin/tickets/${a.slug}`;
@@ -116,7 +116,7 @@ export default function AdminNav() {
                     <li key={a.slug} role="none">
                       {/* Cancel Ticket is the destructive one: separate it visually */}
                       {a.slug === "cancel" && i > 0 && (
-                        <div className="my-1.5 h-px bg-bk-ink/5" />
+                        <div className="my-1.5 h-px bg-ink/5" />
                       )}
                       <Link
                         role="menuitem"
@@ -125,10 +125,10 @@ export default function AdminNav() {
                         aria-current={active ? "page" : undefined}
                         className={`block rounded-lg px-3 py-2.5 text-sm transition-colors ${
                           active
-                            ? "bg-bk-accent text-bk-accent-ink"
+                            ? "bg-accent text-accent-ink"
                             : a.slug === "cancel"
-                              ? "text-red-700 hover:bg-red-600/10"
-                              : "text-bk-ink/80 hover:bg-bk-ink/5 hover:text-bk-ink"
+                              ? "text-danger-strong hover:bg-danger/10"
+                              : "text-ink/80 hover:bg-ink/5 hover:text-ink"
                         }`}
                       >
                         {a.label}
@@ -145,7 +145,7 @@ export default function AdminNav() {
         <form action={logout} className="ml-auto md:ml-0 md:justify-self-end">
           <button
             type="submit"
-            className="rounded-full border border-bk-line px-5 py-2 text-sm font-medium transition-colors hover:border-bk-ink"
+            className="rounded-full border border-line px-5 py-2 text-sm font-medium transition-colors hover:border-ink"
           >
             Logout
           </button>

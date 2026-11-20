@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
 import Petals from "@/components/effects/petals";
-import BookNowButton from "@/components/ui/book-now-button";
+import { BookNowButton, Eyebrow } from "@/components/ui";
 import { HERO_LOGO } from "@/lib/preload";
 import { IMAGES } from "@/config/images";
 import {
@@ -22,7 +22,7 @@ const FOOTER_BG = ["png", "jpg", "jpeg", "webp"]
 
 export default function Footer() {
   return (
-    <footer className="relative isolate w-full overflow-hidden bg-neutral-950 text-white">
+    <footer className="relative isolate w-full overflow-hidden bg-stage text-white">
       {/* Desktop: petals drift over the whole footer */}
       <div className="hidden md:block">
         <Petals />
@@ -69,9 +69,9 @@ export default function Footer() {
           >
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title} className="w-full md:w-52">
-                <h3 className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
+                <Eyebrow as="h3" tracking="wide" className="mb-5">
                   {col.title}
-                </h3>
+                </Eyebrow>
                 <ul className="flex flex-col items-center gap-3 text-sm md:items-start">
                   {col.links.map((link) => (
                     <li key={link.label}>

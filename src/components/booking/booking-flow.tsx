@@ -11,6 +11,7 @@ import { takenSeatsForShow, useSeatRecords } from "@/lib/seat-store";
 import type { Attendee, Confirmation, Selection } from "./booking.types";
 import { inr, showKeyOf, validateAttendee } from "./booking.utils";
 import ConfirmationView from "./confirmation";
+import StepNav from "./step-nav";
 import Stepper, { STEPS } from "./stepper";
 import DateTimeStep from "./steps/datetime-step";
 import ReviewPayStep from "./steps/review-pay-step";
@@ -18,49 +19,6 @@ import SeatsStep from "./steps/seats-step";
 import { BookingBar, totalOf } from "./summary-panel";
 
 const LAST_STEP = STEPS.length - 1;
-
-function StepNav({
-  step,
-  canNext,
-  paying,
-  total,
-  onBack,
-  onNext,
-}: {
-  step: number;
-  canNext: boolean;
-  paying: boolean;
-  total: number;
-  onBack: () => void;
-  onNext: () => void;
-}) {
-  return (
-    <div className="flex items-center gap-3">
-      {step > 0 && (
-        <button
-          type="button"
-          onClick={onBack}
-          disabled={paying}
-          className="rounded-full border border-bk-line px-6 py-3 text-sm font-medium transition-colors hover:border-bk-ink disabled:opacity-40"
-        >
-          Back
-        </button>
-      )}
-      <button
-        type="button"
-        onClick={onNext}
-        disabled={!canNext || paying}
-        className="flex-1 rounded-full bg-bk-accent px-6 py-3 text-sm font-semibold text-bk-accent-ink transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
-      >
-        {step < LAST_STEP
-          ? "Continue"
-          : paying
-            ? "Processing…"
-            : `Pay ${inr(total)}`}
-      </button>
-    </div>
-  );
-}
 
 export default function BookingFlow() {
   const [step, setStep] = useState(0);
@@ -170,8 +128,8 @@ export default function BookingFlow() {
   const back = () => setStep((s) => Math.max(0, s - 1));
 
   return (
-    <div className="bk-page-bg min-h-screen text-bk-ink">
-      <header className="border-b border-bk-line">
+    <div className="paper-page-bg min-h-screen text-ink">
+      <header className="border-b border-line">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <Link href="/" aria-label="Humare Ram — home">
             <Image
@@ -186,7 +144,7 @@ export default function BookingFlow() {
           <Link
             href="/"
             aria-label="Close and go back to the site"
-            className="grid size-10 place-content-center rounded-full border border-bk-line text-bk-muted transition-colors hover:border-bk-ink hover:text-bk-ink"
+            className="grid size-10 place-content-center rounded-full border border-line text-ink-muted transition-colors hover:border-ink hover:text-ink"
           >
             <svg
               width="14"
@@ -265,11 +223,17 @@ export default function BookingFlow() {
 
             <BookingBar selection={selection}>
               <StepNav
-                step={step}
-                canNext={stepValid}
-                paying={paying}
-                total={total}
+                showBack={step > 0}
+                backDisabled={paying}
                 onBack={back}
+                nextLabel={
+                  step < LAST_STEP
+                    ? "Continue"
+                    : paying
+                      ? "Processing…"
+                      : `Pay ${inr(total)}`
+                }
+                canNext={stepValid && !paying}
                 onNext={next}
               />
             </BookingBar>

@@ -31,11 +31,11 @@ export default function Modal({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className="fixed inset-0 z-50 grid place-items-center bg-bk-ink/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4 backdrop-blur-sm"
       onMouseDown={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className={`max-h-[90vh] w-full overflow-auto rounded-2xl border border-bk-line bg-bk-surface p-6 shadow-2xl ${width}`}
+        className={`max-h-[90vh] w-full overflow-auto rounded-2xl border border-line bg-paper-raised p-6 shadow-2xl ${width}`}
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
@@ -44,7 +44,7 @@ export default function Modal({
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="text-bk-muted transition-colors hover:text-bk-ink"
+              className="text-ink-muted transition-colors hover:text-ink"
             >
               ✕
             </button>

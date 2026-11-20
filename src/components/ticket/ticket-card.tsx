@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui";
 import {
   buildTicketSvg,
   downloadTicketPng,
@@ -42,18 +43,13 @@ export default function TicketCard({
         dangerouslySetInnerHTML={{ __html: svg }}
       />
       <div className="flex flex-wrap items-center justify-center gap-3">
-        <button
-          type="button"
-          onClick={download}
-          disabled={busy}
-          className="rounded-full bg-bk-accent px-7 py-3 text-sm font-semibold text-white transition-transform hover:scale-105 disabled:opacity-60 disabled:hover:scale-100"
-        >
+        <Button onClick={download} disabled={busy}>
           {busy ? "Preparing…" : "Download ticket"}
-        </button>
+        </Button>
         {children}
       </div>
       {failed && (
-        <p className="text-xs text-red-700">
+        <p className="text-xs text-danger-strong">
           Could not create the file. Please try again.
         </p>
       )}

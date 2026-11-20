@@ -139,7 +139,7 @@ export default function GalleryTrack({ title, subtitle, images }: Props) {
     <section
       id="gallery"
       ref={root}
-      className="relative isolate w-full overflow-hidden bg-neutral-950 bg-[radial-gradient(ellipse_at_center,rgba(190,95,20,0.16),transparent_65%)] py-10 text-white md:py-28"
+      className="relative isolate w-full overflow-hidden bg-stage bg-[radial-gradient(ellipse_at_center,rgba(190,95,20,0.16),transparent_65%)] py-10 text-white md:py-28"
     >
       <Mandala
         className="left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -164,7 +164,7 @@ export default function GalleryTrack({ title, subtitle, images }: Props) {
         {images.map((img, i) => (
           <div
             key={`${img.src}-${i}`}
-            className="absolute left-1/2 top-1/2 aspect-[4/3] w-[9.5rem] overflow-hidden rounded-xl md:w-[clamp(15rem,30vw,28rem)] md:rounded-2xl border border-amber-300/20 bg-neutral-900 shadow-2xl shadow-black/60 will-change-transform"
+            className="absolute left-1/2 top-1/2 aspect-[4/3] w-[9.5rem] overflow-hidden rounded-xl md:w-[clamp(15rem,30vw,28rem)] md:rounded-2xl border border-gold/20 bg-stage-soft shadow-2xl shadow-black/60 will-change-transform"
           >
             <Image
               src={img.src}

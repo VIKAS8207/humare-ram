@@ -1,5 +1,5 @@
 import Image from "next/image";
-import RevealSection from "@/components/ui/reveal-section";
+import { Eyebrow, RevealSection } from "@/components/ui";
 import { getMarqueeLogos } from "./marquee-logos";
 import { TIERS, tierOf } from "./partner-tiers";
 
@@ -13,11 +13,9 @@ export default async function MarqueeSection() {
   const placed = logos.map((l) => ({ ...l, ...tierOf(l) }));
 
   return (
-    <RevealSection className="relative w-full overflow-hidden bg-neutral-950 px-4 py-12 text-white md:px-6 md:py-24">
+    <RevealSection className="relative w-full overflow-hidden bg-stage px-4 py-12 text-white md:px-6 md:py-24">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-7 md:gap-16">
-        <p className="rv text-xs font-medium uppercase tracking-[0.4em] text-orange-400">
-          Our Partners
-        </p>
+        <Eyebrow className="rv">Our Partners</Eyebrow>
 
         {/* Tiers side by side (they wrap onto a new line on small screens) */}
         <div className="grid w-full grid-cols-2 items-start gap-x-3 gap-y-6 md:flex md:flex-wrap md:justify-center md:gap-x-8 md:gap-y-10">

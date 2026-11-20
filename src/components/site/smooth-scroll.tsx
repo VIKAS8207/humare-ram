@@ -6,7 +6,11 @@ import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { SCROLL_KEY } from "@/lib/skip-loader";
 
 // Single RAF loop: GSAP ticker drives Lenis, Lenis drives ScrollTrigger.
-export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+export default function SmoothScroll({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // Remember scroll position so a reload can skip the loader (see lib/skip-loader.ts)
   useEffect(() => {
     let raf = 0;

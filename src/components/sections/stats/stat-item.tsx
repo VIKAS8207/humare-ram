@@ -61,12 +61,10 @@ export default function StatItem({
       ref={root}
       className="flex flex-col items-center gap-2 px-3 text-center md:gap-3 md:px-4"
     >
-      <p className="text-[clamp(1.75rem,4vw,3.5rem)] font-semibold leading-none tracking-tight whitespace-nowrap text-amber-100 tabular-nums">
+      <p className="text-[clamp(1.75rem,4vw,3.5rem)] font-semibold leading-none tracking-tight whitespace-nowrap text-gold-pale tabular-nums">
         <span ref={num}>{value}</span>
-        {unit && (
-          <span className="ml-2 text-[0.55em] text-orange-400">{unit}</span>
-        )}
-        <span className="text-orange-400">{suffix}</span>
+        {unit && <span className="ml-2 text-[0.55em] text-ember">{unit}</span>}
+        <span className="text-ember">{suffix}</span>
       </p>
       <p className="text-[0.55rem] font-medium uppercase tracking-[0.22em] text-white/60 md:text-xs">
         {label}

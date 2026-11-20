@@ -193,7 +193,7 @@ export default function Loader() {
           <span className="loader-num tabular-nums">000</span>
         </div>
         <div className="h-px w-full bg-white/20">
-          <div className="loader-bar h-full origin-left scale-x-0 bg-orange-400" />
+          <div className="loader-bar h-full origin-left scale-x-0 bg-ember" />
         </div>
       </div>
     </div>

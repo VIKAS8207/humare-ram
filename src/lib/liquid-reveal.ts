@@ -127,7 +127,11 @@ export function createLiquidReveal(
   // Full-screen triangle
   const buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array([-1, -1, 3, -1, -1, 3]),
+    gl.STATIC_DRAW,
+  );
   const aPos = gl.getAttribLocation(prog, "aPos");
   gl.enableVertexAttribArray(aPos);
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
@@ -148,8 +152,14 @@ export function createLiquidReveal(
   // Jitter seed spots a bit so every load dissolves differently
   const seeds = new Float32Array(SEED_COUNT * 3);
   BASE_SEEDS.forEach(([x, y, z], i) => {
-    seeds[i * 3] = Math.min(0.97, Math.max(0.03, x + (Math.random() - 0.5) * 0.08));
-    seeds[i * 3 + 1] = Math.min(0.97, Math.max(0.03, y + (Math.random() - 0.5) * 0.08));
+    seeds[i * 3] = Math.min(
+      0.97,
+      Math.max(0.03, x + (Math.random() - 0.5) * 0.08),
+    );
+    seeds[i * 3 + 1] = Math.min(
+      0.97,
+      Math.max(0.03, y + (Math.random() - 0.5) * 0.08),
+    );
     seeds[i * 3 + 2] = z;
   });
   gl.uniform3fv(u("uSeeds"), seeds);

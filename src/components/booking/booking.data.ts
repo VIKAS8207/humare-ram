@@ -1,3 +1,4 @@
+import { SEAT_COLORS } from "@/config/palette";
 import type { SeatCategory, ShowDay, Venue } from "./booking.types";
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -31,9 +32,14 @@ export const SHOWS: Record<string, ShowDay[]> = {
 // the seating plan); every other seat is sold on BookMyShow. Which seats belong
 // to which tier is set in seat-plan.data.ts.
 export const SEAT_CATEGORIES: SeatCategory[] = [
-  { id: "vvip", name: "VVIP Sofa", price: 5000, color: "#d9669c" },
-  { id: "dp", name: "Diamond + Platinum", price: 2500, color: "#7c5cd6" },
-  { id: "gold", name: "Gold", price: 1500, color: "#d99207" },
+  { id: "vvip", name: "VVIP Sofa", price: 5000, color: SEAT_COLORS.vvip },
+  {
+    id: "dp",
+    name: "Diamond + Platinum",
+    price: 2500,
+    color: SEAT_COLORS.diamondPlatinum,
+  },
+  { id: "gold", name: "Gold", price: 1500, color: SEAT_COLORS.gold },
 ];
 
 // ───────────────────────────────────────────────────────────────────────────

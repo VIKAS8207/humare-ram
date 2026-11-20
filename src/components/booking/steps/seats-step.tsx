@@ -1,5 +1,7 @@
 "use client";
 
+import { SEAT_COLORS } from "@/config/palette";
+import { Button } from "@/components/ui";
 import {
   useCallback,
   useEffect,
@@ -43,7 +45,7 @@ type Props = {
 };
 
 // Selected seats: plain green, no border
-const SELECTED_COLOR = "#16a34a";
+const SELECTED_COLOR = SEAT_COLORS.selected;
 
 // Seat icon size on the plan (plan units); seats are 16.8 apart
 const SEAT_SIZE = 15;
@@ -95,15 +97,15 @@ function QuantityPicker({
   const tel = GROUP_BOOKING_CONTACT.phone.replace(/[^+\d]/g, "");
 
   const step =
-    "grid size-12 place-content-center rounded-full border border-bk-line text-2xl transition-colors hover:border-bk-accent disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-bk-line";
+    "grid size-12 place-content-center rounded-full border border-line text-2xl transition-colors hover:border-accent disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:border-line";
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-bk-ink/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 grid place-items-center bg-ink/40 p-4 backdrop-blur-sm"
       role="dialog"
       aria-label="How many people?"
     >
-      <div className="relative w-full max-w-md rounded-2xl border border-bk-line bg-bk-surface p-6 shadow-2xl">
+      <div className="relative w-full max-w-md rounded-2xl border border-line bg-paper-raised p-6 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-2xl font-semibold tracking-tight">
             How many people?
@@ -113,7 +115,7 @@ function QuantityPicker({
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="text-bk-muted transition-colors hover:text-bk-ink"
+              className="text-ink-muted transition-colors hover:text-ink"
             >
               ✕
             </button>
@@ -150,30 +152,26 @@ function QuantityPicker({
           </button>
         </div>
 
-        <p className="mt-8 rounded-lg bg-bk-gold/10 px-4 py-3 text-sm text-bk-ink">
+        <p className="mt-8 rounded-lg bg-bronze/10 px-4 py-3 text-sm text-ink">
           You can book up to {max} seats in this transaction.
         </p>
 
-        <button
-          type="button"
-          onClick={() => onPick(n)}
-          className="mt-5 w-full rounded-full bg-bk-accent px-6 py-3 text-sm font-semibold text-bk-accent-ink transition-transform hover:scale-[1.02]"
-        >
+        <Button className="mt-5 w-full" onClick={() => onPick(n)}>
           Select {n} seat{n > 1 ? "s" : ""}
-        </button>
+        </Button>
 
         {/* More than the limit: point them to the group-booking contact */}
         {groupOpen && (
           <div
             role="alertdialog"
             aria-label="Group bookings"
-            className="absolute inset-0 z-10 grid place-items-center rounded-2xl bg-bk-ink/50 p-4 backdrop-blur-[2px]"
+            className="absolute inset-0 z-10 grid place-items-center rounded-2xl bg-ink/50 p-4 backdrop-blur-[2px]"
           >
-            <div className="flex w-full flex-col gap-4 rounded-xl border border-bk-line bg-bk-surface p-6 text-center shadow-xl">
+            <div className="flex w-full flex-col gap-4 rounded-xl border border-line bg-paper-raised p-6 text-center shadow-xl">
               <h4 className="text-xl font-semibold tracking-tight">
                 Booking for more than {max}?
               </h4>
-              <p className="text-sm text-bk-muted">
+              <p className="text-sm text-ink-muted">
                 For bookings of more than {max} seats, please contact:
               </p>
               <div className="flex flex-col gap-1">
@@ -182,24 +180,24 @@ function QuantityPicker({
                 </span>
                 <a
                   href={`tel:${tel}`}
-                  className="text-xl font-semibold text-bk-accent underline-offset-4 hover:underline"
+                  className="text-xl font-semibold text-accent underline-offset-4 hover:underline"
                 >
                   {GROUP_BOOKING_CONTACT.phone}
                 </a>
                 <a
                   href={`mailto:${GROUP_BOOKING_CONTACT.email}`}
-                  className="text-sm text-bk-muted underline-offset-4 hover:underline"
+                  className="text-sm text-ink-muted underline-offset-4 hover:underline"
                 >
                   {GROUP_BOOKING_CONTACT.email}
                 </a>
               </div>
-              <button
-                type="button"
+              <Button
+                variant="dark"
+                size="sm"
                 onClick={() => setGroupOpen(false)}
-                className="rounded-full bg-bk-ink px-6 py-2.5 text-sm font-semibold text-bk-bg"
               >
                 Got it
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -408,7 +406,7 @@ export default function SeatsStep({
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Select your seats
         </h2>
-        <p className="text-bk-muted" aria-live="polite">
+        <p className="text-ink-muted" aria-live="polite">
           {quantity === null
             ? "First tell us how many people are coming."
             : remaining > 0
@@ -419,23 +417,19 @@ export default function SeatsStep({
 
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => setPickerOpen(true)}
-          className="rounded-full bg-bk-ink px-5 py-2.5 text-sm font-semibold text-bk-bg"
-        >
+        <Button variant="dark" size="sm" onClick={() => setPickerOpen(true)}>
           {quantity === null
             ? "Choose quantity"
             : `${quantity} seat${quantity > 1 ? "s" : ""}`}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={suggest}
           disabled={quantity === null}
-          className="rounded-full border border-bk-line px-5 py-2.5 text-sm font-medium transition-colors hover:border-bk-accent/50 disabled:opacity-40"
         >
           Best available
-        </button>
+        </Button>
         {seats.length > 0 && (
           <button
             type="button"
@@ -443,7 +437,7 @@ export default function SeatsStep({
               setNotice("");
               onSeats([]);
             }}
-            className="px-2 text-sm text-bk-muted underline-offset-4 hover:text-bk-ink hover:underline"
+            className="px-2 text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline"
           >
             Clear
           </button>
@@ -460,7 +454,7 @@ export default function SeatsStep({
             aria-label="Zoom out"
             disabled={zoom <= ZOOMS[0]}
             onClick={() => zoomStep(-1)}
-            className="grid size-10 place-content-center rounded-full border border-bk-line text-xl transition-colors hover:border-bk-accent disabled:opacity-30 disabled:hover:border-bk-line"
+            className="grid size-10 place-content-center rounded-full border border-line text-xl transition-colors hover:border-accent disabled:opacity-30 disabled:hover:border-line"
           >
             −
           </button>
@@ -469,7 +463,7 @@ export default function SeatsStep({
             aria-label="Reset zoom"
             disabled={zoom === 1}
             onClick={() => changeZoom(1)}
-            className="w-14 text-center text-xs font-semibold tabular-nums text-bk-muted transition-colors hover:text-bk-ink disabled:hover:text-bk-muted"
+            className="w-14 text-center text-xs font-semibold tabular-nums text-ink-muted transition-colors hover:text-ink disabled:hover:text-ink-muted"
           >
             {zoom === 1 ? "Fit" : `${Math.round(zoom * 100)}%`}
           </button>
@@ -478,7 +472,7 @@ export default function SeatsStep({
             aria-label="Zoom in"
             disabled={zoom >= ZOOMS[ZOOMS.length - 1]}
             onClick={() => zoomStep(1)}
-            className="grid size-10 place-content-center rounded-full border border-bk-line text-xl transition-colors hover:border-bk-accent disabled:opacity-30 disabled:hover:border-bk-line"
+            className="grid size-10 place-content-center rounded-full border border-line text-xl transition-colors hover:border-accent disabled:opacity-30 disabled:hover:border-line"
           >
             +
           </button>
@@ -486,7 +480,7 @@ export default function SeatsStep({
       </div>
 
       {notice && (
-        <p role="status" className="text-sm text-bk-ink">
+        <p role="status" className="text-sm text-ink">
           {notice}
         </p>
       )}
@@ -499,14 +493,14 @@ export default function SeatsStep({
         {SEAT_CATEGORIES.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
             <SeatIcon color={c.color} />
-            {c.name} <span className="text-bk-muted">{inr(c.price)}</span>
+            {c.name} <span className="text-ink-muted">{inr(c.price)}</span>
           </li>
         ))}
-        <li className="flex items-center gap-2 text-bk-muted">
+        <li className="flex items-center gap-2 text-ink-muted">
           <SeatIcon color="rgba(43,29,18,0.18)" />
           Sold
         </li>
-        <li className="flex items-center gap-2 text-bk-muted">
+        <li className="flex items-center gap-2 text-ink-muted">
           <SeatIcon color="rgba(43,29,18,0.3)" />
           Book on BookMyShow
         </li>
@@ -516,13 +510,13 @@ export default function SeatsStep({
         </li>
       </ul>
 
-      <p className="text-sm text-bk-muted">
+      <p className="text-sm text-ink-muted">
         Tap a seat and all your seats are selected together, side by side. Tap
         another seat to move one seat there. Faded seats are sold on BookMyShow.
       </p>
 
       {/* Seat plan */}
-      <div className="relative rounded-2xl border border-bk-line bg-bk-surface">
+      <div className="relative rounded-2xl border border-line bg-paper-raised">
         {/* Whole plan visible at 1x; scrolls inside its box once zoomed in */}
         <div
           ref={scroller}

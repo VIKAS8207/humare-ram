@@ -1,5 +1,5 @@
-import BookLink from "@/components/transitions/book-link";
-import { BOOK_NOW_HREF } from "@/components/navbar/nav.data";
+import BookLink from "@/components/site/transitions/book-link";
+import { BOOK_NOW_HREF } from "@/components/site/navbar/nav.data";
 
 // THE "Book Now" button. Golden, and it glows on hover. Use this everywhere a
 // Book Now button is needed (navbar, hero, footer, ...) so the look is changed
@@ -23,7 +23,7 @@ export default function BookNowButton({
   return (
     <BookLink
       href={BOOK_NOW_HREF}
-      className={`inline-flex items-center justify-center rounded-full bg-gradient-to-b from-[#fbe3a0] via-[#f0bb4f] to-[#c98a2b] font-semibold text-neutral-950 shadow-[0_2px_14px_-4px_rgba(240,187,79,0.55)] ring-1 ring-amber-200/50 transition-[box-shadow,filter,scale] duration-300 hover:scale-105 hover:shadow-[0_0_30px_6px_rgba(255,190,70,0.6)] hover:brightness-110 focus-visible:shadow-[0_0_30px_6px_rgba(255,190,70,0.6)] focus-visible:outline-none ${SIZES[size]} ${className}`}
+      className={`inline-flex items-center justify-center rounded-full bg-gradient-to-b from-gold-light via-gold-mid to-gold-deep font-semibold text-stage shadow-[0_2px_14px_-4px_rgba(240,187,79,0.55)] ring-1 ring-gold-soft/50 transition-[box-shadow,filter,scale] duration-300 hover:scale-105 hover:shadow-[0_0_30px_6px_rgba(255,190,70,0.6)] hover:brightness-110 focus-visible:shadow-[0_0_30px_6px_rgba(255,190,70,0.6)] focus-visible:outline-none ${SIZES[size]} ${className}`}
     >
       {children}
     </BookLink>

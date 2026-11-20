@@ -34,7 +34,7 @@ export default function BookLink({ href, className, children }: Props) {
     const sheet = document.createElement("div");
     // class names are literal here so Tailwind generates them
     sheet.className =
-      "bg-bk-bg fixed inset-0 z-[100] rounded-t-[2rem] shadow-[0_-20px_60px_rgba(0,0,0,0.35)] will-change-transform";
+      "bg-paper fixed inset-0 z-[100] rounded-t-[2rem] shadow-[0_-20px_60px_rgba(0,0,0,0.35)] will-change-transform";
     sheet.setAttribute("aria-hidden", "true");
     document.body.appendChild(sheet);
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Pill } from "@/components/ui";
 import AmberBurst from "@/components/effects/amber-burst";
 import { useRef } from "react";
 import Mandala from "@/components/effects/mandala";
@@ -74,7 +75,7 @@ export default function SpotlightSection({
     <section
       id={id}
       ref={root}
-      className="relative isolate w-full overflow-hidden bg-neutral-950 text-white"
+      className="relative isolate w-full overflow-hidden bg-stage text-white"
     >
       <Mandala
         className={`top-1/2 -translate-y-1/2 ${reverse ? "-right-64" : "-left-64"}`}
@@ -90,10 +91,10 @@ export default function SpotlightSection({
           }`}
         >
           <div className="flex flex-col gap-4">
-            <p className="spot-copy flex items-center gap-4 text-xs font-medium uppercase tracking-[0.4em] text-orange-300">
+            <p className="spot-copy flex items-center gap-4 text-xs font-medium uppercase tracking-[0.4em] text-ember-soft">
               <span
                 aria-hidden
-                className="h-px w-10 bg-gradient-to-r from-transparent to-orange-400 md:w-14"
+                className="h-px w-10 bg-gradient-to-r from-transparent to-ember md:w-14"
               />
               {eyebrow}
             </p>
@@ -104,17 +105,16 @@ export default function SpotlightSection({
                 </span>
               ))}
             </h2>
-            <p className="spot-copy text-base font-medium text-orange-300 md:text-2xl">
+            <p className="spot-copy text-base font-medium text-ember-soft md:text-2xl">
               {role}
             </p>
             {tags && (
               <ul className="spot-copy flex flex-wrap gap-2 pt-1">
                 {tags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-full border border-orange-400/50 px-2.5 py-0.5 text-[0.6rem] font-medium uppercase tracking-[0.18em] text-orange-300 md:px-3 md:py-1 md:text-xs md:tracking-[0.25em]"
-                  >
-                    {tag}
+                  <li key={tag}>
+                    <Pill tone="ember" size="xs" className="font-medium">
+                      {tag}
+                    </Pill>
                   </li>
                 ))}
               </ul>
@@ -151,11 +151,11 @@ export default function SpotlightSection({
           into each other with no hard divide. Sits above the content. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-neutral-950 to-transparent md:hidden"
+        className="pointer-events-none absolute inset-x-0 top-0 z-20 h-16 bg-gradient-to-b from-stage to-transparent md:hidden"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-36 bg-gradient-to-t from-neutral-950 via-neutral-950/80 to-transparent md:hidden"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-36 bg-gradient-to-t from-stage via-stage/80 to-transparent md:hidden"
       />
     </section>
   );

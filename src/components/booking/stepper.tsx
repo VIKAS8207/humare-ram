@@ -20,7 +20,7 @@ export default function Stepper({ step, onStepClick, steps = STEPS }: Props) {
             {i < steps.length - 1 && (
               <span
                 aria-hidden
-                className={`absolute left-1/2 top-4 h-px w-full ${done ? "bg-bk-accent/50" : "bg-bk-line"}`}
+                className={`absolute left-1/2 top-4 h-px w-full ${done ? "bg-accent/50" : "bg-line"}`}
               />
             )}
             <button
@@ -33,17 +33,17 @@ export default function Stepper({ step, onStepClick, steps = STEPS }: Props) {
               <span
                 className={`grid size-8 shrink-0 place-content-center rounded-full border text-sm font-semibold transition-colors ${
                   active
-                    ? "border-bk-accent bg-bk-accent text-bk-accent-ink"
+                    ? "border-accent bg-accent text-accent-ink"
                     : done
-                      ? "border-bk-accent bg-bk-bg text-bk-ink group-hover:bg-bk-accent/10"
-                      : "border-bk-line bg-bk-bg text-bk-muted"
+                      ? "border-accent bg-paper text-ink group-hover:bg-accent/10"
+                      : "border-line bg-paper text-ink-muted"
                 }`}
               >
                 {done ? "✓" : i + 1}
               </span>
               <span
                 className={`text-[0.65rem] font-medium uppercase tracking-[0.15em] md:text-xs md:tracking-[0.2em] ${
-                  active || done ? "text-bk-ink" : "text-bk-muted"
+                  active || done ? "text-ink" : "text-ink-muted"
                 }`}
               >
                 {label}

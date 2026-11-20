@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Modal from "@/components/ui/modal";
-import Select from "@/components/ui/select";
+import { useMemo, useState } from "react";
+import {
+  ActionMenu,
+  Button,
+  FilterTabs,
+  Modal,
+  Pagination,
+  Pill,
+  SearchInput,
+  type ButtonVariant,
+  type PillTone,
+} from "@/components/ui";
 import { VENUES } from "@/components/booking/booking.data";
 import { dateParts, formatTime, inr } from "@/components/booking/booking.utils";
 import type { SeatRecord, SeatRecordType } from "@/lib/seat-store";
@@ -17,25 +26,21 @@ export type TableAction = {
   tone?: "default" | "primary" | "danger";
 };
 
-export const STATUS: Record<
-  SeatRecordType,
-  { label: string; className: string }
-> = {
-  block: {
-    label: "Booked",
-    className: "border-green-700/30 bg-green-700/10 text-green-800",
-  },
-  reserve: {
-    label: "Reserved",
-    className: "border-bk-gold/40 bg-bk-gold/10 text-bk-gold",
-  },
-  hold: {
-    label: "On hold",
-    className: "border-bk-accent/30 bg-bk-accent/10 text-bk-accent",
-  },
-};
+const ACTION_VARIANT: Record<
+  NonNullable<TableAction["tone"]>,
+  ButtonVariant
+> = { default: "outline", primary: "primary", danger: "danger" };
 
-const FILTERS: { id: "all" | SeatRecordType; label: string }[] = [
+export const STATUS: Record<SeatRecordType, { label: string; tone: PillTone }> =
+  {
+    block: { label: "Booked", tone: "ok" },
+    reserve: { label: "Reserved", tone: "bronze" },
+    hold: { label: "On hold", tone: "accent" },
+  };
+
+type Filter = "all" | SeatRecordType;
+
+const FILTERS: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "block", label: "Booked" },
   { id: "hold", label: "On hold" },
@@ -44,11 +49,10 @@ const FILTERS: { id: "all" | SeatRecordType; label: string }[] = [
 
 /** Payment state shown in the table */
 export function paymentState(r: SeatRecord) {
-  if (r.type === "hold")
-    return { label: "Pending", className: "text-bk-accent" };
+  if (r.type === "hold") return { label: "Pending", className: "text-accent" };
   if (r.type === "reserve" && !r.paymentMode)
-    return { label: "Not paid", className: "text-bk-muted" };
-  return { label: "Paid", className: "text-green-800" };
+    return { label: "Not paid", className: "text-ink-muted" };
+  return { label: "Paid", className: "text-ok-strong" };
 }
 
 const fmtWhen = (ms: number) =>
@@ -62,125 +66,9 @@ const showShort = (r: SeatRecord) => {
   return `${p.weekday}, ${p.day} ${p.month} · ${formatTime(r.time)}`;
 };
 
-const PAGE_SIZES = [10, 25, 50].map((n) => ({
-  value: String(n),
-  label: `${n} per page`,
-}));
-
-/** Page numbers with "…" gaps, e.g. 1 … 4 5 6 … 12 */
-function pageList(page: number, total: number): (number | "gap")[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const out: (number | "gap")[] = [1];
-  const from = Math.max(2, page - 1);
-  const to = Math.min(total - 1, page + 1);
-  if (from > 2) out.push("gap");
-  for (let i = from; i <= to; i++) out.push(i);
-  if (to < total - 1) out.push("gap");
-  out.push(total);
-  return out;
-}
-
 const th =
-  "px-5 py-3.5 text-left text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-bk-muted";
+  "px-5 py-3.5 text-left text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-ink-muted";
 const td = "px-5 py-4 align-middle";
-
-const toneClass = {
-  default:
-    "border border-bk-line text-bk-ink hover:border-bk-ink bg-transparent",
-  primary: "bg-bk-accent text-white",
-  danger: "bg-red-600 text-white",
-} as const;
-
-// ── ⋮ menu (fixed position so the table never clips it) ──────────────────────
-function RowMenu({
-  items,
-}: {
-  items: { label: string; onSelect: () => void; danger?: boolean }[];
-}) {
-  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
-  const btn = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!pos) return;
-    const close = () => setPos(null);
-    const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (btn.current?.contains(t)) return;
-      if (!(t as Element).closest?.("[data-row-menu]")) close();
-    };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    window.addEventListener("scroll", close, true);
-    window.addEventListener("resize", close);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-      window.removeEventListener("scroll", close, true);
-      window.removeEventListener("resize", close);
-    };
-  }, [pos]);
-
-  const toggle = () => {
-    if (pos) return setPos(null);
-    const r = btn.current!.getBoundingClientRect();
-    setPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
-  };
-
-  return (
-    <>
-      <button
-        ref={btn}
-        type="button"
-        aria-label="Ticket actions"
-        aria-haspopup="menu"
-        aria-expanded={Boolean(pos)}
-        onClick={toggle}
-        className={`grid size-9 place-content-center rounded-full text-bk-muted transition-colors hover:bg-bk-ink/5 hover:text-bk-ink ${pos ? "bg-bk-ink/5 text-bk-ink" : ""}`}
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-          fill="currentColor"
-          aria-hidden
-        >
-          <circle cx="9" cy="3.5" r="1.5" />
-          <circle cx="9" cy="9" r="1.5" />
-          <circle cx="9" cy="14.5" r="1.5" />
-        </svg>
-      </button>
-      {pos && (
-        <ul
-          data-row-menu
-          role="menu"
-          style={{ top: pos.top, right: pos.right }}
-          className="fixed z-40 min-w-48 overflow-hidden rounded-xl border border-bk-line bg-bk-surface p-1.5 shadow-2xl shadow-bk-ink/20"
-        >
-          {items.map((it) => (
-            <li key={it.label} role="none">
-              <button
-                type="button"
-                role="menuitem"
-                onClick={() => {
-                  setPos(null);
-                  it.onSelect();
-                }}
-                className={`block w-full whitespace-nowrap rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
-                  it.danger
-                    ? "text-red-700 hover:bg-red-600/10"
-                    : "text-bk-ink/80 hover:bg-bk-ink/5 hover:text-bk-ink"
-                }`}
-              >
-                {it.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
-  );
-}
 
 export default function TicketsTable({
   records,
@@ -192,9 +80,9 @@ export default function TicketsTable({
   /** Extra things you can do with a ticket (shown in the ⋮ menu and the popup) */
   actions: (record: SeatRecord) => TableAction[];
   emptyText?: string;
-  initialFilter?: "all" | SeatRecordType;
+  initialFilter?: Filter;
 }) {
-  const [filter, setFilter] = useState<"all" | SeatRecordType>(initialFilter);
+  const [filter, setFilter] = useState<Filter>(initialFilter);
   const [query, setQuery] = useState("");
   const [viewing, setViewing] = useState<SeatRecord | null>(null);
   const [page, setPage] = useState(1);
@@ -220,8 +108,7 @@ export default function TicketsTable({
 
   const pages = Math.max(1, Math.ceil(rows.length / pageSize));
   const current = Math.min(page, pages); // e.g. last row of the last page removed
-  const start = (current - 1) * pageSize;
-  const visible = rows.slice(start, start + pageSize);
+  const visible = rows.slice((current - 1) * pageSize, current * pageSize);
 
   // Keep the popup in sync if the record changes (e.g. hold → booked)
   const viewed = viewing
@@ -262,60 +149,41 @@ export default function TicketsTable({
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div
-          role="tablist"
-          aria-label="Filter tickets"
-          className="flex flex-wrap gap-2"
-        >
-          {FILTERS.map((f) => {
-            const count =
+        <FilterTabs
+          label="Filter tickets"
+          value={filter}
+          onChange={(id) => {
+            setFilter(id);
+            setPage(1);
+          }}
+          tabs={FILTERS.map((f) => ({
+            ...f,
+            count:
               f.id === "all"
                 ? records.length
-                : records.filter((r) => r.type === f.id).length;
-            const active = filter === f.id;
-            return (
-              <button
-                key={f.id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => {
-                  setFilter(f.id);
-                  setPage(1);
-                }}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-bk-accent text-bk-accent-ink"
-                    : "border border-bk-line text-bk-muted hover:border-bk-ink hover:text-bk-ink"
-                }`}
-              >
-                {f.label} <span className="opacity-70">({count})</span>
-              </button>
-            );
-          })}
-        </div>
-        <input
-          type="search"
+                : records.filter((r) => r.type === f.id).length,
+          }))}
+        />
+        <SearchInput
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
+          onChange={(v) => {
+            setQuery(v);
             setPage(1);
           }}
           placeholder="Search ticket, name, phone, seat…"
-          aria-label="Search tickets"
-          className="w-full rounded-full border border-bk-line bg-bk-surface px-5 py-2.5 text-sm text-bk-ink outline-none transition-colors placeholder:text-bk-muted/60 focus:border-bk-accent md:max-w-xs"
+          label="Search tickets"
         />
       </div>
 
       {rows.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-bk-line p-8 text-center text-sm text-bk-muted">
+        <p className="rounded-2xl border border-dashed border-line p-8 text-center text-sm text-ink-muted">
           {records.length === 0 ? emptyText : "No tickets match your search."}
         </p>
       ) : (
-        <div className="rounded-2xl border border-bk-line bg-bk-surface shadow-[0_1px_0_rgba(43,29,18,0.04)]">
+        <div className="rounded-2xl border border-line bg-paper-raised shadow-[0_1px_0_rgba(43,29,18,0.04)]">
           <div className="overflow-x-auto rounded-t-2xl">
             <table className="w-full min-w-184 border-collapse text-sm">
-              <thead className="border-b border-bk-line bg-bk-ink/[0.035]">
+              <thead className="border-b border-line bg-ink/[0.035]">
                 <tr>
                   <th className={th}>Ticket</th>
                   <th className={th}>Status</th>
@@ -327,14 +195,14 @@ export default function TicketsTable({
                   <th className={`${th} w-16 text-right`}>Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-bk-line">
+              <tbody className="divide-y divide-line">
                 {visible.map((r) => {
                   const st = STATUS[r.type];
                   const pay = paymentState(r);
                   return (
                     <tr
                       key={r.id}
-                      className="transition-colors hover:bg-bk-ink/2.5"
+                      className="transition-colors hover:bg-ink/2.5"
                     >
                       <td
                         className={`${td} whitespace-nowrap font-mono text-[0.8rem] font-semibold`}
@@ -342,14 +210,10 @@ export default function TicketsTable({
                         {r.id}
                       </td>
                       <td className={td}>
-                        <span
-                          className={`inline-block whitespace-nowrap rounded-full border px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.12em] ${st.className}`}
-                        >
-                          {st.label}
-                        </span>
+                        <Pill tone={st.tone}>{st.label}</Pill>
                       </td>
                       <td className={`${td} font-medium`}>{r.person.name}</td>
-                      <td className={`${td} whitespace-nowrap text-bk-ink/80`}>
+                      <td className={`${td} whitespace-nowrap text-ink/80`}>
                         {showShort(r)}
                       </td>
                       <td
@@ -362,9 +226,10 @@ export default function TicketsTable({
                       >
                         {pay.label}
                       </td>
-                      <td className={`${td} text-bk-ink/80`}>{r.adminName}</td>
+                      <td className={`${td} text-ink/80`}>{r.adminName}</td>
                       <td className={`${td} text-right`}>
-                        <RowMenu
+                        <ActionMenu
+                          label="Ticket actions"
                           items={[
                             {
                               label: "View details",
@@ -385,76 +250,16 @@ export default function TicketsTable({
             </table>
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-bk-line px-5 py-4 text-sm md:flex-row md:items-center md:justify-between">
-            <div className="flex items-center gap-4">
-              <p className="text-bk-muted">
-                Showing{" "}
-                <span className="font-medium text-bk-ink">
-                  {start + 1}–{start + visible.length}
-                </span>{" "}
-                of{" "}
-                <span className="font-medium text-bk-ink">{rows.length}</span>
-              </p>
-              <div className="w-36">
-                <Select
-                  aria-label="Rows per page"
-                  value={String(pageSize)}
-                  onChange={(v) => {
-                    setPageSize(Number(v));
-                    setPage(1);
-                  }}
-                  options={PAGE_SIZES}
-                  className="py-2! text-sm"
-                />
-              </div>
-            </div>
-            <nav
-              aria-label="Pagination"
-              className="flex flex-wrap items-center gap-1.5 md:justify-end"
-            >
-              <span className="mr-2 text-bk-muted">
-                Page <span className="font-medium text-bk-ink">{current}</span>{" "}
-                of <span className="font-medium text-bk-ink">{pages}</span>
-              </span>
-              <button
-                type="button"
-                onClick={() => setPage(current - 1)}
-                disabled={current === 1}
-                className="rounded-full border border-bk-line px-4 py-2 font-medium transition-colors hover:border-bk-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-bk-line"
-              >
-                Previous
-              </button>
-              {pageList(current, pages).map((n, i) =>
-                n === "gap" ? (
-                  <span key={`g${i}`} className="px-1.5 text-bk-muted">
-                    …
-                  </span>
-                ) : (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setPage(n)}
-                    aria-current={n === current ? "page" : undefined}
-                    className={`grid size-9 place-content-center rounded-full font-medium tabular-nums transition-colors ${
-                      n === current
-                        ? "bg-bk-accent text-bk-accent-ink"
-                        : "text-bk-ink/80 hover:bg-bk-ink/5"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ),
-              )}
-              <button
-                type="button"
-                onClick={() => setPage(current + 1)}
-                disabled={current === pages}
-                className="rounded-full border border-bk-line px-4 py-2 font-medium transition-colors hover:border-bk-ink disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-bk-line"
-              >
-                Next
-              </button>
-            </nav>
-          </div>
+          <Pagination
+            page={current}
+            pageSize={pageSize}
+            total={rows.length}
+            onPage={setPage}
+            onPageSize={(n) => {
+              setPageSize(n);
+              setPage(1);
+            }}
+          />
         </div>
       )}
 
@@ -466,34 +271,30 @@ export default function TicketsTable({
           showClose
           onClose={() => setViewing(null)}
         >
-          <dl className="flex flex-col divide-y divide-bk-line text-sm">
+          <dl className="flex flex-col divide-y divide-line text-sm">
             {detailRows(viewed).map(([label, value]) => (
               <div key={label} className="flex justify-between gap-6 py-3">
-                <dt className="text-bk-muted">{label}</dt>
+                <dt className="text-ink-muted">{label}</dt>
                 <dd className="text-right font-medium">{value}</dd>
               </div>
             ))}
           </dl>
           <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setViewing(null)}
-              className={`flex-1 rounded-full px-6 py-3 font-medium transition-colors ${toneClass.default}`}
-            >
+            <Button variant="outline" grow onClick={() => setViewing(null)}>
               Close
-            </button>
+            </Button>
             {actions(viewed).map((a) => (
-              <button
+              <Button
                 key={a.label}
-                type="button"
+                variant={ACTION_VARIANT[a.tone ?? "default"]}
+                grow
                 onClick={() => {
                   setViewing(null);
                   a.onSelect(viewed);
                 }}
-                className={`flex-1 whitespace-nowrap rounded-full px-6 py-3 font-semibold ${toneClass[a.tone ?? "default"]}`}
               >
                 {a.label}
-              </button>
+              </Button>
             ))}
           </div>
         </Modal>

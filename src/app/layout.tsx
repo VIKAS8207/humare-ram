@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/smooth-scroll";
+import SmoothScroll from "@/components/site/smooth-scroll";
 import { SKIP_LOADER_SCRIPT } from "@/lib/skip-loader";
 
 const inter = Inter({

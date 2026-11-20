@@ -1,3 +1,4 @@
+import { Eyebrow } from "@/components/ui";
 import { SHOWS } from "../booking.data";
 import { dateParts, formatTime } from "../booking.utils";
 
@@ -25,15 +26,15 @@ export default function DateTimeStep({
         <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
           Pick a date & time
         </h2>
-        <p className="text-bk-muted">
+        <p className="text-ink-muted">
           Only dates with scheduled shows are shown.
         </p>
       </header>
 
       <section className="flex flex-col items-center gap-4" aria-label="Date">
-        <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
+        <Eyebrow as="h3" tone="bronze" tracking="wide">
           Date
-        </h3>
+        </Eyebrow>
         <div role="radiogroup" className="flex flex-wrap justify-center gap-3">
           {days.map((d) => {
             const p = dateParts(d.date);
@@ -47,8 +48,8 @@ export default function DateTimeStep({
                 onClick={() => onDate(d.date)}
                 className={`flex w-24 flex-col items-center gap-1 rounded-2xl border px-3 py-4 transition-colors ${
                   selected
-                    ? "border-bk-accent bg-bk-accent text-bk-accent-ink"
-                    : "border-bk-line bg-bk-surface hover:border-bk-accent/50"
+                    ? "border-accent bg-accent text-accent-ink"
+                    : "border-line bg-paper-raised hover:border-accent/50"
                 }`}
               >
                 <span className="text-xs font-medium uppercase tracking-[0.2em] opacity-70">
@@ -67,11 +68,14 @@ export default function DateTimeStep({
       </section>
 
       <section className="flex flex-col items-center gap-4" aria-label="Time">
-        <h3 className="text-xs font-medium uppercase tracking-[0.3em] text-bk-gold">
+        <Eyebrow as="h3" tone="bronze" tracking="wide">
           Time
-        </h3>
+        </Eyebrow>
         {date ? (
-          <div role="radiogroup" className="flex flex-wrap justify-center gap-3">
+          <div
+            role="radiogroup"
+            className="flex flex-wrap justify-center gap-3"
+          >
             {times.map((t) => {
               const selected = t === time;
               return (
@@ -83,8 +87,8 @@ export default function DateTimeStep({
                   onClick={() => onTime(t)}
                   className={`rounded-full border px-6 py-3 text-sm font-medium transition-colors ${
                     selected
-                      ? "border-bk-accent bg-bk-accent text-bk-accent-ink"
-                      : "border-bk-line hover:border-bk-accent/50"
+                      ? "border-accent bg-accent text-accent-ink"
+                      : "border-line hover:border-accent/50"
                   }`}
                 >
                   {formatTime(t)}
@@ -93,7 +97,7 @@ export default function DateTimeStep({
             })}
           </div>
         ) : (
-          <p className="text-sm text-bk-muted">
+          <p className="text-sm text-ink-muted">
             Select a date to see show times.
           </p>
         )}

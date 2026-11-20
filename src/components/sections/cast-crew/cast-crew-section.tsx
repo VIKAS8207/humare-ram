@@ -1,4 +1,4 @@
-import RevealSection from "@/components/ui/reveal-section";
+import { Eyebrow, SectionHeader, StageSection } from "@/components/ui";
 import Mandala from "@/components/effects/mandala";
 import { getSlugImages } from "@/lib/slug-images";
 import CastCard from "./cast-card";
@@ -12,30 +12,21 @@ export default async function CastCrewSection() {
   ]);
 
   return (
-    <RevealSection
-      id="cast"
-      className="relative isolate w-full overflow-hidden bg-neutral-950 px-4 py-16 text-white md:px-6 md:py-36"
-    >
+    <StageSection id="cast">
       <Mandala className="-right-72 -top-40" size="46rem" duration={300} />
       <div className="mx-auto flex max-w-6xl flex-col gap-12 md:gap-28">
         {/* Header */}
-        <header className="flex flex-col items-center gap-4 text-center md:gap-6">
-          <p className="rv text-xs font-medium uppercase tracking-[0.4em] text-orange-400">
-            {CAST_CREW_HEADER.eyebrow}
-          </p>
-          <h2 className="rv text-[clamp(1.9rem,7vw,5.5rem)] font-semibold leading-none tracking-tight text-white">
-            {CAST_CREW_HEADER.title}
-          </h2>
-          <p className="rv max-w-xl text-sm text-white/60 md:text-lg">
-            {CAST_CREW_HEADER.subtitle}
-          </p>
-        </header>
+        <SectionHeader
+          eyebrow={CAST_CREW_HEADER.eyebrow}
+          title={CAST_CREW_HEADER.title}
+          subtitle={CAST_CREW_HEADER.subtitle}
+        />
 
         {/* Cast */}
         <div className="flex flex-col gap-5 md:gap-8">
-          <h3 className="rv text-center text-xs font-medium uppercase tracking-[0.4em] text-amber-300/80 md:text-left">
+          <Eyebrow tone="gold" className="rv text-center md:text-left">
             Cast
-          </h3>
+          </Eyebrow>
           <div className="rv-grid grid grid-cols-4 gap-2 sm:gap-4 lg:grid-cols-6">
             {CAST.map((m) => (
               <CastCard
@@ -52,16 +43,16 @@ export default async function CastCrewSection() {
 
         {/* Crew — credits list */}
         <div className="flex flex-col gap-5 md:gap-8">
-          <h3 className="rv text-center text-xs font-medium uppercase tracking-[0.4em] text-amber-300/80 md:text-left">
+          <Eyebrow tone="gold" className="rv text-center md:text-left">
             Crew
-          </h3>
-          <dl className="rv border-t border-amber-300/15">
+          </Eyebrow>
+          <dl className="rv border-t border-gold/15">
             {CREW.map((c) => (
               <div
                 key={c.role}
-                className="grid gap-1 border-b border-amber-300/15 py-4 text-center md:text-left md:grid-cols-[1fr_2fr] md:items-baseline md:gap-10 md:py-6"
+                className="grid gap-1 border-b border-gold/15 py-4 text-center md:text-left md:grid-cols-[1fr_2fr] md:items-baseline md:gap-10 md:py-6"
               >
-                <dt className="text-xs font-medium uppercase tracking-[0.3em] text-orange-400">
+                <dt className="text-xs font-medium uppercase tracking-[0.3em] text-ember">
                   {c.role}
                 </dt>
                 <dd className="text-base font-medium text-white md:text-2xl">
@@ -72,6 +63,6 @@ export default async function CastCrewSection() {
           </dl>
         </div>
       </div>
-    </RevealSection>
+    </StageSection>
   );
 }

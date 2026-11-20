@@ -77,7 +77,7 @@ export default function HeroSection() {
   return (
     <section
       ref={root}
-      className="relative flex h-screen h-dvh w-full items-center justify-center overflow-hidden bg-neutral-950 text-white"
+      className="relative flex h-screen h-dvh w-full items-center justify-center overflow-hidden bg-stage text-white"
     >
       {/* Phones only: curtain + lamps at the very top, fading to black below */}
       <div
@@ -93,12 +93,12 @@ export default function HeroSection() {
           sizes="100vw"
           className="h-auto w-full select-none"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-stage via-stage/60 to-transparent" />
       </div>
 
       <div
         aria-hidden
-        className="hero-glow pointer-events-none absolute left-1/2 top-1/2 size-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/30 blur-3xl will-change-transform"
+        className="hero-glow pointer-events-none absolute left-1/2 top-1/2 size-[70vmin] -translate-x-1/2 -translate-y-1/2 rounded-full bg-ember-deep/30 blur-3xl will-change-transform"
       />
 
       {/* Drifting embers: behind the cutout, in front of the glow */}
