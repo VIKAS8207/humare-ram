@@ -34,7 +34,7 @@ export default async function CastCrewSection() {
                 name={m.name}
                 role={m.role}
                 image={
-                  m.image?.src ?? castPhotos[m.slug] ?? singerPhotos[m.slug]
+                  castPhotos[m.slug] ?? m.image?.src ?? singerPhotos[m.slug]
                 }
               />
             ))}
