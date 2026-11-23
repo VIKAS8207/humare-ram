@@ -18,25 +18,33 @@ export default async function MarqueeSection() {
         <Eyebrow className="rv">Our Partners</Eyebrow>
 
         {/* Tiers side by side (they wrap onto a new line on small screens) */}
-        <div className="grid w-full grid-cols-2 items-start gap-x-3 gap-y-6 md:flex md:flex-wrap md:justify-center md:gap-x-8 md:gap-y-10">
+        <div className="flex w-full flex-col items-center gap-6 md:flex-row md:flex-wrap md:justify-center md:gap-x-8 md:gap-y-10">
           {TIERS.map((tier) => {
             const items = placed.filter((l) => l.tier === tier.id);
             if (items.length === 0) return null;
             return (
               <div
                 key={tier.id}
-                className="flex flex-col items-center gap-3 md:gap-5"
+                className={`flex flex-col items-center gap-3 md:gap-5 ${
+                  tier.id === "powered" ? "md:w-full md:items-center" : ""
+                }`}
               >
                 <h2
                   className={`rv text-[0.55rem] font-semibold uppercase tracking-[0.2em] md:text-[0.7rem] md:tracking-[0.35em] ${tier.label_class}`}
                 >
                   {tier.label}
                 </h2>
-                <ul className="flex w-full flex-wrap justify-center gap-4 md:w-auto">
+                <ul
+                  className={`flex w-full justify-center gap-4 md:w-auto ${
+                    tier.id === "powered"
+                      ? "flex-col items-center md:flex-row md:items-stretch"
+                      : "flex-wrap"
+                  }`}
+                >
                   {items.map((logo) => (
                     <li
                       key={logo.src}
-                      className={`rv grid h-20 w-full place-content-center rounded-xl border px-4 transition-colors md:h-32 md:w-60 md:rounded-2xl md:px-6 ${tier.card}`}
+                      className={`rv grid h-20 w-60 place-content-center rounded-xl border px-4 transition-colors md:h-32 md:w-60 md:rounded-2xl md:px-6 ${tier.card}`}
                     >
                       <Image
                         src={logo.src}

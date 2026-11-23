@@ -122,11 +122,25 @@ export default function HeroSection() {
             width={IMAGES.sponsor.width}
             height={IMAGES.sponsor.height}
             priority
-            sizes="(min-width: 768px) 8rem, 6rem"
-            className="hero-brand h-auto w-24 select-none md:w-32"
+            sizes="(min-width: 768px) 5rem, 4rem"
+            className="hero-brand h-auto w-16 select-none md:w-20"
           />
           <p className="hero-brand text-xs font-medium uppercase tracking-[0.35em] opacity-80 md:text-sm">
             Presents
+          </p>
+        </div>
+        {/* The artwork is dark blue, so it is brightened to stay readable on the dark hero */}
+        <div className="flex flex-col items-center gap-3 md:gap-4">
+          <Image
+            src={IMAGES.rotary.src}
+            alt="Rotary International District 3261 — Create Lasting Impact, celebrating 30 years"
+            width={IMAGES.rotary.width}
+            height={IMAGES.rotary.height}
+            sizes="(min-width: 768px) 18rem, 13rem"
+            className="hero-rotary h-auto w-52 select-none brightness-[1.9] md:w-72"
+          />
+          <p className="hero-rotary text-center text-xs font-semibold uppercase tracking-[0.2em] text-white/80 md:whitespace-nowrap md:text-sm">
+            Rotary Club of <br className="md:hidden" />Raipur Cosmopolitan
           </p>
         </div>
         <h1 className="hero-logo w-[80vw] md:w-[min(36vw,40rem)] will-change-transform">
@@ -140,21 +154,11 @@ export default function HeroSection() {
             className="h-auto w-full select-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.25)]"
           />
         </h1>
-        {/* Tagline and Rotary logo side by side (stacked on small phones) */}
-        <div className="-mt-4 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 md:-mt-6">
-          <p className="hero-sub text-center text-sm opacity-70 sm:text-right md:text-base">
+        {/* Tagline below the main logo */}
+        <div className="-mt-4 flex flex-col items-center gap-4 md:-mt-6">
+          <p className="hero-sub text-center text-sm opacity-70 md:text-base">
             Discover Ramayan&apos;s <br /> untold chapters, live on stage
           </p>
-          <span aria-hidden className="hidden h-10 w-px bg-white/25 sm:block" />
-          {/* The artwork is dark blue, so it is brightened to stay readable on the dark hero */}
-          <Image
-            src={IMAGES.rotary.src}
-            alt="Rotary International District 3261 — Create Lasting Impact, celebrating 30 years"
-            width={IMAGES.rotary.width}
-            height={IMAGES.rotary.height}
-            sizes="(min-width: 768px) 14rem, 10rem"
-            className="hero-rotary h-auto w-40 select-none brightness-[1.9] md:w-56"
-          />
         </div>
         <BookNowButton className="hero-cta" />
       </div>

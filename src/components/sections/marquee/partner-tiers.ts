@@ -55,6 +55,7 @@ export const TIERS: {
 // media-x.png. Anything else falls in "Media Partner".
 const KNOWN: { match: RegExp; tier: TierId; name: string }[] = [
   { match: /sendh/i, tier: "powered", name: "The Sendh Lake City" },
+  { match: /sagar.?tmt/i, tier: "powered", name: "Sagar TMT" },
   { match: /marina/i, tier: "platinum", name: "31 Marina by Dee Vee" },
   { match: /super|sarvottam/i, tier: "gold", name: "Sarvottam" },
   { match: /asa/i, tier: "media", name: "ASA Advertising Agency" },
